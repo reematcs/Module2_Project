@@ -55,11 +55,11 @@ resource "aws_instance" "ansible_provisioning_server" {
     private_key = file(local.private_key_path)
     timeout = "4m"
   }
- provisioner "local-exec" {
-    inline = [
-      "",
-    ]
-  }
+#  provisioner "local-exec" {
+#     inline = [
+#       "",
+#     ]
+#   }
   provisioner "remote-exec" {
     inline = [
       "sudo apt-add-repository -y ppa:ansible/ansible",
