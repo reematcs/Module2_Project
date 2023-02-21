@@ -1,0 +1,16 @@
+---
+# tasks file for apache2_role
+- name: install apache2
+  apt: name=apache2 update_cache=yes state=latest
+
+- name: enabled mod_rewrite
+  apache2_module: name=rewrite state=present
+# disable mpm_worker and ignore warnings about missing mpm module
+- name: disable mpm_worker and ignore warnings
+  apache2_module:
+    state: absent
+    name: mpm_worker
+    ignore_configcheck: True
+  
+  notify:
+  - restart apache2

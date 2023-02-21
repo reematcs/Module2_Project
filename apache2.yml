@@ -1,0 +1,11 @@
+---
+- name: install/restart apache2 service
+  hosts: webservers
+  become: true
+  roles:
+    - role: apache2_role
+  
+  handlers:
+    - name: restart apache2
+      service: name=apache2 state=restarted
+
