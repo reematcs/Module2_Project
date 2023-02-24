@@ -1,8 +1,8 @@
 output "ip_worker" {
-  value = aws_instance.ansible_worker.public_ip
+  value = aws_instance.ansible_worker.private_ip
 }
 output "ip_server" {
-  value = aws_instance.ansible_provisioning_server.public_ip
+  value = aws_instance.ansible_provisioning_server.private_ip
 }
 # Export Terraform variable values to an Ansible var_file
 resource "local_file" "tf_ansible_inventory" {
@@ -12,6 +12,10 @@ resource "local_file" "tf_ansible_inventory" {
 
     [webservers]
     ${aws_instance.ansible_worker.public_ip}
+
+    
+    [webservers:vars]
+    ansible_ssh_common_args="-o StrictHostKeyChecking=no"
     DOC
   filename = "./ansible_provisioning/inventory"
 }
@@ -40,20 +44,25 @@ data "archive_file" "data_backup" {
   type        = "zip"
   source_dir = "./ansible_provisioning"
   output_path = "${var.ansible_zip}"
+  depends_on = [
+    local_file.tf_ansible_inventory
+ ]
 }
 # }
 # Upload an object
-resource "aws_s3_object" "object" {
+resource "aws_s3_object" "upload_ansible" {
 #    count = data.aws_s3_bucket.b1.id ? 1 : 0
     # bucket_id_ref = data.aws_s3_bucket.b1.id
     bucket = aws_s3_bucket.b1.id
     key = "${var.ansible_zip}"
     source = "${var.ansible_zip}"
-    etag = filemd5("${var.ansible_zip}")
-
+    #etag = filemd5("${var.ansible_zip}")
+depends_on = [
+    data.archive_file.data_backup
+ ]
 }
 
-resource "null_resource" "ProvisionRemoteHostsIpToAnsibleHosts" {
+resource "null_resource" "InitialSetup" {
  
   connection {
     type = "ssh"
@@ -65,11 +74,64 @@ resource "null_resource" "ProvisionRemoteHostsIpToAnsibleHosts" {
 
   provisioner "remote-exec" {
     inline = [
+      "#!/bin/bash",
+      "ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1",
+      "cat ~/.ssh/id_rsa.pub",
       "while ! which aws; do sleep 10; echo \"Sleeping for a bit...\"; done",
+      "sudo aws s3 cp /home/ubuntu/.ssh/id_rsa.pub s3://${aws_s3_bucket.b1.id}/id_rsa.pub",
       "sudo aws s3 cp s3://${aws_s3_bucket.b1.id}/ansible.zip .",
       "unzip ansible.zip",
-      "ansible-playbook tomcat.yml"
-
+      #"ansible-playbook -i ./inventory tomcat.yml"
     ]
   }
+  depends_on = [
+    aws_s3_object.upload_ansible
+  ]
+}
+
+
+resource "null_resource" "CopyPubToWorker" {
+ 
+  connection {
+    type = "ssh"
+    host = aws_instance.ansible_worker.public_ip
+    user = local.ssh_user
+    private_key = file(local.private_key_path)
+    timeout = "4m"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "#!/bin/bash",
+      "while ! which aws; do sleep 10; echo \"Sleeping for a bit...\"; done",
+      "sudo aws s3 cp s3://${aws_s3_bucket.b1.id}/id_rsa.pub .",
+      "cat id_rsa.pub >> ~/.ssh/authorized_keys",
+      #"ansible-playbook -i ./inventory tomcat.yml"
+    ]
+  }
+  depends_on = [
+    null_resource.InitialSetup
+  ]
+}
+
+
+resource "null_resource" "FinalSetup" {
+ 
+  connection {
+    type = "ssh"
+    host = aws_instance.ansible_provisioning_server.public_ip
+    user = local.ssh_user
+    private_key = file(local.private_key_path)
+    timeout = "4m"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "#!/bin/bash",
+      "ansible-playbook -i ./inventory tomcat.yml"
+    ]
+  }
+  depends_on = [
+    null_resource.CopyPubToWorker
+  ]
 }

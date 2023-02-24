@@ -11,7 +11,7 @@ variable "vpc_id"{
 }
 
 variable "bucket_name" {
-    default = "projectmodule2-reem-ansibledir-2"
+    default = "projectmodule2-reem-ansibledir"
 }
 
 variable "acl_value" {

@@ -33,6 +33,12 @@ resource "aws_security_group" "projectmodule2_sec_group" {
 		protocol    = "tcp"
 		cidr_blocks = ["0.0.0.0/0"]
 	}
+  ingress {
+		from_port   = 6576
+		to_port     = 6576
+		protocol    = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
   egress {
 		from_port   = 0
 		to_port     = 0
@@ -122,6 +128,9 @@ sudo apt install ansible -y
 sudo apt install git -y
 sudo apt install unzip -y
 sudo apt install awscli -y
+sudo apt install jenkins -y
+sudo apt install openjdk-11-jdk -y
+sudo systemctl start jenkins  
 EOF
 
 # TODO: Try using aws user data to run at boot time
@@ -153,6 +162,7 @@ resource "aws_instance" "ansible_worker" {
   associate_public_ip_address = "true"
   vpc_security_group_ids =[aws_security_group.projectmodule2_sec_group.id]
   key_name = local.key_name
+  iam_instance_profile = aws_iam_instance_profile.demo-profile.name
 
   tags = {
     Name = "Ansible_Provisioning_Worker"
@@ -165,5 +175,9 @@ resource "aws_instance" "ansible_worker" {
     private_key = file(local.private_key_path)
     timeout = "4m"
   }
-   
+   user_data = <<EOF
+#!/bin/bash
+sudo apt update
+sudo apt install awscli -y
+EOF
 }
