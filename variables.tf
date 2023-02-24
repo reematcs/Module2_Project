@@ -14,6 +14,11 @@ variable "bucket_name" {
     default = "projectmodule2-reem-ansibledir"
 }
 
+variable "aws_terraform_keyname" {
+    default = "aws_terraform"
+  
+}
+
 variable "acl_value" {
 
     default = "private"
@@ -22,18 +27,18 @@ variable "acl_value" {
 
 variable "aws_access_key" {
 
-default = "ASIA37M36QKRQWJB5CQJ"
+default = "ASIA37M36QKRZRI5F24J"
 
 }
 
 variable "aws_secret_key" {
 
-default = "ZUliyVNJrqfHrEUf1O8vX7/Tt01wAmTi5J34KyQn"
+default = "RVUGwGbOQgkfP70AzkwPjmQFrG+23J2vX92gJFI4"
 
 }
 
 variable "aws_token" {
-  default = "FwoGZXIvYXdzEID//////////wEaDDhTKnLiAmPE25VCJCK3AfEzbk68/n7FaZohXka+TzaJJ9ua59bATS4p6gTK/a4fNpC63FfIonfo3H5Iq6lYFGhOyWS9fJHFzCQLFQusZcN9il/ry3qc0jwG//oPB0uszTPX+0SI2zT6UMSMVfqDt5PSP1fihdzRJmsF1mPn3Wat+19v7fvWk1kWz51iBM8+/sWrEPmLGf+KzKQ3yITrrJoa4VhaDqqLFaVn3wTZYO9SEjRI0qy8juTtVrKd5tAd2ir4Q/BZ8iiZnuOfBjItAljhk6lsprNk6dJuZy6lTvUr+/YYjfNV1bFNwuDmpHKFpsIfxOZDnerHW6Cc"
+  default = "FwoGZXIvYXdzEIj//////////wEaDCCfLUIERj8DQw083iK3AW45SjMETaf4l2tdyitq3k93g/NSHJAtdfn7g6li5BK5CxVSr9Iw4nHdtthTbN14F5O3mIgP6kWShgWkD/gVR7YFjsZVhzRSZKl1Hx/Uoa0uE7sFWJdh5entV0YjHYQuXVQ98AWBeRO4QA19IzUfqTc5h2ml/63PTuTvBfVykwnxfkBTc7Jga4wqA+sFiKCvIs72oRTZNSFT547F3+dWS1OYsjtMA3/Py0xynwo2515Pu24Lh/CAlyjV7eSfBjIt0Xld7CIyCFcZbW7j6DKexrHpV8D6ak07oF97iKPcKVRGMcd+EzQkAjaZb510"
 }
 variable "region" {
 
