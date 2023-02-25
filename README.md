@@ -65,6 +65,10 @@ Module2_Project
 # Terraform:
 ## 1. Setup
 
+Inside `main.tf`, we ensure that Terraform uses a specific version for Terraform and our required providers (aws).
+
+# you can use the semantic version.terraform
+
 ```HCL
 terraform{
 required_version = ">= 1.0" # semver 
@@ -76,7 +80,32 @@ required_version = ">= 1.0" # semver
       }
 }
 ```
+Inside `variables.tf`, we setup the requirements for our Virtual Private Cloud and instance settings, as well as the AWS key for creating, managing and accessing our resources.
 
+```HCL
+variable "ami_id" {
+    default = "ami-00eeedc4036573771" 
+}
+variable "vpc_id"{
+    default="vpc-056d622c7a32e4729"
+}
+variable "aws_terraform_keyname" {
+    default = "aws_terraform"
+}
+variable "aws_access_key" {
+    default = "..."
+}
+variable "aws_secret_key" {
+default = "..."
+}
+variable "aws_token" {
+  default = "..."
+}
+variable "region" {
+    default = "region"
+}
+```
+Inside `main.tf`, we use the variables we specified earlier to 
 ```HCL
 locals {
   ami_id = "${var.ami_id}"
