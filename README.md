@@ -246,11 +246,54 @@ resource "aws_iam_instance_profile" "access-s3-profile" {
   role = aws_iam_role.access_bucket_role.name
 }
 ```
-## 2. Provisioning and Deployment Servers
-### 1. Inventory file in Ansible Provisioning Directory
-### 2. Zipping Ansible Provisioning Directory
-### 3. Upload to S3 bucket
-### 4. Ansible Provisioning Directory Download to Provisioning Server
+## 2. Provisioning and Deployment Server Instances
+
+### 1. Provisioning Server
+
+In `main.tf`, the `aws_instance` for the provisioning server takes in the machine image `ami` for ubuntu, belongs to the same VPC and has the same security group applied, the same AWS key, and `aws_iam_instance_profile` that we created earlier in the [IAM section](#4-iam-role). Connection details are standard. Under `user_data`, we perform an `apt update` and install `awscli` to upload and download to the `S3` bucket, `ansible` to provision the deployment server, `git` to clone the necessary repository, `maven` to package the WAR file, and java and `jenkins` as required.
+
+```HCL
+
+resource "aws_instance" "ansible_provisioning_server" {
+  ami = local.ami_id
+  instance_type = "t2.micro"
+  associate_public_ip_address = "true"
+  vpc_security_group_ids =[aws_security_group.server_sec_group.id]
+  key_name = local.key_name
+  iam_instance_profile = aws_iam_instance_profile.access-s3-profile.name
+
+  tags = {
+    Name = "Ansible_Provisioning_Server"
+  }
+
+  connection {
+    type = "ssh"
+    host = self.public_ip
+    user = local.ssh_user
+    private_key = file(local.private_key_path)
+    timeout = "4m"
+  }
+  user_data = <<EOF
+#!/bin/bash
+sudo apt-add-repository -y ppa:ansible/ansible
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt update
+sudo apt install unzip -y
+sudo apt install ansible -y
+sudo apt install openjdk-11-jdk -y
+sudo apt install maven -y
+sudo apt install awscli -y
+sudo apt install git -y
+sudo apt install jenkins -y
+sudo systemctl start jenkins.service 
+EOF
+}
+```
+### 3. Inventory file in Ansible Provisioning Directory
+### 4. Zipping Ansible Provisioning Directory
+### 5. Upload to S3 bucket
+### 6. Ansible Provisioning Directory Download to Provisioning Server
 ## 3. Ansible Provisioning
 ## 4. SSH Keys
 ## 5. Running Ansible Playbooks

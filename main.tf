@@ -95,6 +95,7 @@ resource "aws_iam_instance_profile" "access-s3-profile" {
   name = "s3-access-profile"
   role = aws_iam_role.access_bucket_role.name
 }
+
 resource "aws_instance" "ansible_provisioning_server" {
   ami = local.ami_id
   instance_type = "t2.micro"
