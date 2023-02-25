@@ -77,9 +77,9 @@ Module2_Project
 # Ansible:
 ## 1. Tomcat Setup on Deployment Server
 ## 2. Clone and Build Hello World WAR File
-## Deploy WAR File and Restart Tomcat on Deployment Server
+## 3. Deploy WAR File and Restart Tomcat on Deployment Server
 
 # Jenkins: 
-## Manual Setup of Pipeline
-## Testing and Validating Pipeline
+## 1. Manual Setup of Pipeline
+## 2. Testing and Validating Pipeline
 
