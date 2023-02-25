@@ -64,7 +64,7 @@ Module2_Project
 
 # Terraform:
 ## 1. Setup
-
+### 1. Basic Setup
 Inside `main.tf`, we ensure that Terraform uses a specific version for Terraform and our required providers (aws).
 
 ```HCL
@@ -78,7 +78,7 @@ required_version = ">= 1.0" # semver
       }
 }
 ```
-Inside `variables.tf`, we setup the requirements for our Virtual Private Cloud and instance settings, as well as the AWS key for creating, managing and accessing our resources.
+Inside `variables.tf`, we setup the requirements for our Virtual Private Cloud and instance settings, as well as the AWS key `aws_terraform_keyname` for creating, managing and accessing our resources.
 
 ```HCL
 variable "ami_id" {
@@ -113,16 +113,97 @@ locals {
   private_key_path = "${var.aws_terraform_keyname}.pem"
 }
 ```
-## 2. IAM role
-## 3. S3 bucket
-## 4. Provisioning and Deployment Servers
+
+### 2. Security Groups
+
+Both provisioning and deployment servers require a security group. Since both require ports `22`, `80`, `8080`, we can use the same security group for both.
+
+```HCL
+resource "aws_security_group" "server_sec_group" {
+	name   = "server_sec_group"
+	vpc_id = local.vpc_id
+
+  ingress {
+		from_port   = 22
+		to_port     = 22
+		protocol    = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+  ingress {
+		from_port   = 80
+		to_port     = 80
+		protocol    = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+  ingress {
+		from_port   = 8080
+		to_port     = 8080
+		protocol    = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+  egress {
+		from_port   = 0
+		to_port     = 0
+		protocol    = "-1"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+}
+```
+### 3. IAM role
+
+```HCL
+#Create an IAM Policy
+resource "aws_iam_policy" "access-s3-policy" {
+  name        = "S3accesspolicy"
+  description = "Provides permission to access S3"
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:*",
+                "s3-object-lambda:*"
+            ],
+            "Resource": "*"
+        }
+    ]
+})
+}
+```
+
+```HCL
+resource "aws_iam_role" "access_bucket_role" {
+  name = "bucket_access_role"
+
+  assume_role_policy = jsonencode({
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": [
+          "ec2.amazonaws.com"
+        ]
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+})
+
+}
+```
+## 2. S3 bucket
+## 3. Provisioning and Deployment Servers
 ### 1. Inventory file in Ansible Provisioning Directory
 ### 2. Zipping Ansible Provisioning Directory
 ### 3. Upload to S3 bucket
 ### 4. Ansible Provisioning Directory Download to Provisioning Server
-## 5. Ansible Provisioning
-## 6. SSH Keys
-## 7. Running Ansible Playbooks
+## 4. Ansible Provisioning
+## 5. SSH Keys
+## 6. Running Ansible Playbooks
 
 # Ansible:
 ## 1. Tomcat Setup on Deployment Server

@@ -9,5 +9,5 @@ resource "aws_s3_bucket" "b1" {
 
 resource "aws_s3_bucket_acl" "ansible_provision" {
   bucket = aws_s3_bucket.b1.id
-  acl    = "private"
+  acl    = "public"
 }

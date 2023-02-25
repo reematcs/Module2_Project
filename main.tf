@@ -15,35 +15,6 @@ locals {
   private_key_path = "${var.aws_terraform_keyname}.pem"
 }
 
-resource "aws_security_group" "deployment_sec_group" {
-	name   = "deployment_sec_group"
-	vpc_id = local.vpc_id
-
-  ingress {
-		from_port   = 22
-		to_port     = 22
-		protocol    = "tcp"
-		cidr_blocks = ["0.0.0.0/0"]
-	}
-  ingress {
-		from_port   = 80
-		to_port     = 80
-		protocol    = "tcp"
-		cidr_blocks = ["0.0.0.0/0"]
-	}
-  ingress {
-		from_port   = 8080
-		to_port     = 8080
-		protocol    = "tcp"
-		cidr_blocks = ["0.0.0.0/0"]
-	}  
-  egress {
-		from_port   = 0
-		to_port     = 0
-		protocol    = "-1"
-		cidr_blocks = ["0.0.0.0/0"]
-	}
-}
 resource "aws_security_group" "server_sec_group" {
 	name   = "server_sec_group"
 	vpc_id = local.vpc_id
@@ -73,6 +44,7 @@ resource "aws_security_group" "server_sec_group" {
 		cidr_blocks = ["0.0.0.0/0"]
 	}
 }
+
 #Create an IAM Policy
 resource "aws_iam_policy" "access-s3-policy" {
   name        = "S3accesspolicy"
@@ -112,9 +84,6 @@ resource "aws_iam_role" "access_bucket_role" {
   ]
 })
 
-  tags = {
-    tag-key = "tag-value"
-  }
 }
 
 resource "aws_iam_policy_attachment" "bucket-role-attach" {
@@ -170,7 +139,7 @@ resource "aws_instance" "ansible_deployment" {
   ami = local.ami_id
   instance_type = "t2.micro"
   associate_public_ip_address = "true"
-  vpc_security_group_ids =[aws_security_group.deployment_sec_group.id]
+  vpc_security_group_ids =[aws_security_group.server_sec_group.id]
   key_name = local.key_name
   iam_instance_profile = aws_iam_instance_profile.access-s3-profile.name
 
