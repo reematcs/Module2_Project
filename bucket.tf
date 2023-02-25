@@ -2,7 +2,7 @@ resource "aws_s3_bucket" "b1" {
   bucket = "${var.bucket_name}" 
   force_destroy=true
   tags = {
-    Name        = "projectmodule2-reem-ansibledir"
+    Name        = "${var.bucket_name}"
     Environment = "Dev"
   }
 }

@@ -47,15 +47,15 @@ Module2_Project
 ## Summary of Steps Performed:
 
 1. [Terraform:](#terraform)
-    1. Spun up S3 bucket
-    2. Spun up 2 EC2 instances, provisioning server and deployment, and generated their public and private ips. Attached necessary IAM role to EC2 instances to access S3 bucket.
-    3. Placed Ansible provisioning playbooks and roles, with inventory file for deployment ip address. Zipped using Terraform and uploaded to S3 bucket.
-    4. Downloaded ansible playbook using awscli commands to EC2 provisioning server. Unzipped. Generated ssh keys to connect with deployment server and uploaded to S3 bucket.
-    5. Downloaded and appended ssh public key using awscli commands to deployment instance in authorized_keys.
+    1. Spun up `S3` bucket
+    2. Spun up 2 `EC2` instances, provisioning server and deployment, and generated their public and private ips. Attached necessary IAM role to `EC2` instances to access `S3` bucket.
+    3. Placed Ansible provisioning playbooks and roles, with inventory file for deployment ip address. Zipped using Terraform and uploaded to `S3` bucket.
+    4. Downloaded ansible playbook using `awscli` commands from `S3` bucket to `EC2` provisioning server. Unzipped. Generated ssh keys to connect with deployment server and uploaded to `S3` bucket.
+    5. Downloaded ssh public key from `S3` bucket using `awscli` commands to deployment instance and appended to ssh authorized keys.
     6. Used Terraform to run ansible playbooks.
 2. [Ansible:](#ansible)
     1. Tomcat setup on deployment server.
-    2. Clone and build Hello World WAR file using maven on provisioning server.
+    2. Clone and build "Hello World" WAR file using `maven` on provisioning server.
     3. Deploy WAR file and restart Tomcat on deployment server.
 3. [Jenkins:](#jenkins)
     1. Manual setup of pipeline in [previous step](#ansible)
@@ -149,10 +149,33 @@ resource "aws_security_group" "server_sec_group" {
 	}
 }
 ```
-### 3. IAM role
+
+### 3. S3 bucket
+
+In `bucket.tf`, the `S3` bucket is defined, with a public access control list (ACL):
 
 ```HCL
-#Create an IAM Policy
+resource "aws_s3_bucket" "b1" {
+  bucket = "${var.bucket_name}" 
+  force_destroy=true
+  tags = {
+    Name        = "${var.bucket_name}"
+    Environment = "Dev"
+  }
+}
+
+resource "aws_s3_bucket_acl" "ansible_provision" {
+  bucket = aws_s3_bucket.b1.id
+  acl    = "public"
+}
+```
+### 4. IAM role
+
+In order to facility access from the provisioning and deployment servers to the `S3` bucket, an Identity and Access Management policy and role need to be defined and applied to the server instances. Otherwise, downloading and uploading objects to and from the servers will not work with `awscli`.
+
+In `main.tf`, a `aws_iam_policy` is defined that can allow for access to all objects under an AWS `S3` bucket.
+
+```HCL
 resource "aws_iam_policy" "access-s3-policy" {
   name        = "S3accesspolicy"
   description = "Provides permission to access S3"
@@ -172,6 +195,7 @@ resource "aws_iam_policy" "access-s3-policy" {
 })
 }
 ```
+A `aws_iam_role` is created that allows `EC2` instances with this policy attached to assume this role.
 
 ```HCL
 resource "aws_iam_role" "access_bucket_role" {
@@ -195,15 +219,32 @@ resource "aws_iam_role" "access_bucket_role" {
 
 }
 ```
-## 2. S3 bucket
-## 3. Provisioning and Deployment Servers
+The defined `aws_iam_policy` is attached to the defined `aws_iam_role` through a `aws_iam_policy_attachment`.
+
+```HCL
+resource "aws_iam_policy_attachment" "bucket-role-attach" {
+  name       = "role-attachment"
+  roles      = [aws_iam_role.access_bucket_role.name]
+  policy_arn = aws_iam_policy.access-s3-policy.arn
+}
+```
+The defined `aws_iam_role` is passed through an `aws_iam_instance_profile`.
+
+```HCL
+resource "aws_iam_instance_profile" "access-s3-profile" {
+  name = "s3-access-profile"
+  role = aws_iam_role.access_bucket_role.name
+}
+```
+
+## 2. Provisioning and Deployment Servers
 ### 1. Inventory file in Ansible Provisioning Directory
 ### 2. Zipping Ansible Provisioning Directory
 ### 3. Upload to S3 bucket
 ### 4. Ansible Provisioning Directory Download to Provisioning Server
-## 4. Ansible Provisioning
-## 5. SSH Keys
-## 6. Running Ansible Playbooks
+## 3. Ansible Provisioning
+## 4. SSH Keys
+## 5. Running Ansible Playbooks
 
 # Ansible:
 ## 1. Tomcat Setup on Deployment Server
