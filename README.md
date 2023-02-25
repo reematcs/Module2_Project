@@ -63,16 +63,39 @@ Module2_Project
 
 
 # Terraform:
-## 1. IAM role
-## 2. S3 bucket
-## 3. Provisioning and Deployment Servers
-## 4. Ansible Provisioning
+## 1. Setup
+
+```
+terraform{
+required_version = ">= 1.0" # semver 
+      required_providers {
+        aws = {
+          source = "hashicorp/aws"
+          version = "4.55.0"
+        }
+      }
+}
+```
+
+```
+locals {
+  ami_id = "${var.ami_id}"
+  vpc_id = "${var.vpc_id}"
+  ssh_user = "ubuntu"
+  key_name = "${var.aws_terraform_keyname}"
+  private_key_path = "${var.aws_terraform_keyname}.pem"
+}
+```
+## 2. IAM role
+## 3. S3 bucket
+## 4. Provisioning and Deployment Servers
 ### 1. Inventory file in Ansible Provisioning Directory
 ### 2. Zipping Ansible Provisioning Directory
 ### 3. Upload to S3 bucket
 ### 4. Ansible Provisioning Directory Download to Provisioning Server
-## 5. SSH Keys
-## 6. Running Ansible Playbooks
+## 5. Ansible Provisioning
+## 6. SSH Keys
+## 7. Running Ansible Playbooks
 
 # Ansible:
 ## 1. Tomcat Setup on Deployment Server
