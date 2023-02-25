@@ -8,49 +8,28 @@ Using Terraform and Ansible to provision, Jenkins to Automate Maven packing of W
 
 Terraform, an open-source IaC is used to spin up a EC2 server instance, a deployment instance and S3 bucket to upload ansible provisioning playbooks. 
 ## Directory Structure
-
+```
 Module2_Project
 ├── README.md
 ├── ansible_provisioning
 │   ├── deploy_war.yml
 │   ├── deploy_war_role
 │   │   ├── README.md
-│   │   ├── defaults
-│   │   │   └── main.yml
-│   │   ├── files
-│   │   ├── handlers
-│   │   │   └── main.yml
-│   │   ├── meta
-│   │   │   └── main.yml
 │   │   ├── tasks
 │   │   │   └── main.yml
-│   │   ├── templates
-│   │   ├── tests
-│   │   │   ├── inventory
-│   │   │   └── test.yml
-│   │   └── vars
-│   │       └── main.yml
+│   │   └── tests
+│   │       ├── inventory
+│   │       └── test.yml
 │   ├── localhost
 │   │   ├── host-manager.xml
 │   │   └── manager.xml
 │   ├── maven_build_role
 │   │   ├── README.md
-│   │   ├── defaults
-│   │   │   └── main.yml
-│   │   ├── files
-│   │   ├── handlers
-│   │   │   └── main.yml
-│   │   ├── meta
-│   │   │   └── main.yml
 │   │   ├── tasks
 │   │   │   └── main.yml
-│   │   ├── templates
-│   │   ├── tests
-│   │   │   ├── inventory
-│   │   │   └── test.yml
-│   │   └── vars
-│   │       └── main.yml
-│   ├── terraform.tfstate
+│   │   └── tests
+│   │       ├── inventory
+│   │       └── test.yml
 │   ├── tomcat-users.xml
 │   └── tomcat_playbook.yml
 ├── aws_terraform.pem
@@ -58,12 +37,12 @@ Module2_Project
 ├── main.tf
 ├── outputs.tf
 ├── providers.tf
-├── scripts.sh
 ├── terraform.tfstate
 ├── terraform.tfstate.backup
 └── variables.tf
 
-21 directories, 32 files
+9 directories, 22 files
+```
 
 ## Summary of Steps Performed:
 
