@@ -18,6 +18,11 @@ resource "local_file" "tf_ansible_inventory" {
     ansible_ssh_common_args="-o StrictHostKeyChecking=no"
     DOC
   filename = "./ansible_provisioning/inventory"
+  
+  provisioner "local-exec" {
+    when    = destroy
+    command = "rm ansible.zip"
+ }
 }
 
 resource "aws_s3_bucket_policy" "public_read_access" {

@@ -33,6 +33,12 @@ resource "aws_security_group" "worker_sec_group" {
 		protocol    = "tcp"
 		cidr_blocks = ["0.0.0.0/0"]
 	}
+  ingress {
+		from_port   = 8080
+		to_port     = 8080
+		protocol    = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}  
   egress {
 		from_port   = 0
 		to_port     = 0
@@ -196,6 +202,7 @@ data "archive_file" "data_backup" {
   depends_on = [
     local_file.tf_ansible_inventory
  ]
+ 
 }
 # }
 # Upload an object
@@ -278,7 +285,7 @@ resource "null_resource" "FinalSetup" {
   provisioner "remote-exec" {
     inline = [
       "#!/bin/bash",
-      "ansible-playbook -i ./inventory tomcat.yml",
+      "ansible-playbook -i ./inventory tomcat_playbook.yml",
       "sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
     ]
   }
