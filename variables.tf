@@ -3,15 +3,15 @@
 #   default = "test"
 # }
 variable "ami_id" {
-    default = "ami-0557a15b87f6559cf"
+    default = "ami-00eeedc4036573771"
   
 }
 variable "vpc_id"{
-    default="vpc-0614afb1668a1e8dd"
+    default="vpc-04fcb550eef68165c"
 }
 
 variable "bucket_name" {
-    default = "projectmodule2-reem-ansibledir"
+    default = "project2-reem-ansibledir"
 }
 
 variable "aws_terraform_keyname" {
@@ -27,18 +27,18 @@ variable "acl_value" {
 
 variable "aws_access_key" {
 
-default = "ASIA37M36QKRZRI5F24J"
+default = "ASIA37M36QKRUHVFPJDD"
 
 }
 
 variable "aws_secret_key" {
 
-default = "RVUGwGbOQgkfP70AzkwPjmQFrG+23J2vX92gJFI4"
+default = "gdQIS7NV5vxAvE5oKp8E32j8KgddZvlGZYI/rgJO"
 
 }
 
 variable "aws_token" {
-  default = "FwoGZXIvYXdzEIj//////////wEaDCCfLUIERj8DQw083iK3AW45SjMETaf4l2tdyitq3k93g/NSHJAtdfn7g6li5BK5CxVSr9Iw4nHdtthTbN14F5O3mIgP6kWShgWkD/gVR7YFjsZVhzRSZKl1Hx/Uoa0uE7sFWJdh5entV0YjHYQuXVQ98AWBeRO4QA19IzUfqTc5h2ml/63PTuTvBfVykwnxfkBTc7Jga4wqA+sFiKCvIs72oRTZNSFT547F3+dWS1OYsjtMA3/Py0xynwo2515Pu24Lh/CAlyjV7eSfBjIt0Xld7CIyCFcZbW7j6DKexrHpV8D6ak07oF97iKPcKVRGMcd+EzQkAjaZb510"
+  default = "FwoGZXIvYXdzEIr//////////wEaDG172RFhQDI17u+ffSK3AWkdRajWIaPef0ZpTkcy/UvpyVbocULuKcxlVO3GkFGYDDx+7wB01jhOqsLzkynhd/xD47XQpIIEOQETKLn/+K5nK7Yit08IeTJ2KF3UjPFfhyEN0IXfI0mMdvJ8Yemf2k5j2GF5ibn/MVcoY1g4hiwkj/StuTDCTRcLTswA6Nn3ayeYXQNvDtfWGJ3glWkJb5PNaVnJjlE9gL8ZhGp84uEWO7cz3+bHVSTHBzvTMB/W3LaSW94ziijBp+WfBjItjBWeWw71r8Y+rCiRO2yzLzJq91Z0V+krO6W/HNEA4Th9Hc1jkMi+h+r8rsgU"
 }
 variable "region" {
 

@@ -71,7 +71,7 @@ resource "aws_security_group" "server_sec_group" {
 }
 #Create an IAM Policy
 resource "aws_iam_policy" "access-s3-policy" {
-  name        = "S3-Access-Policy"
+  name        = "S3accesspolicy"
   description = "Provides permission to access S3"
 
   policy = jsonencode({
@@ -90,7 +90,7 @@ resource "aws_iam_policy" "access-s3-policy" {
 }
 
 resource "aws_iam_role" "access_bucket_role" {
-  name = "access_bucket_role"
+  name = "bucket_access_role"
 
   assume_role_policy = jsonencode({
   "Version": "2012-10-17",
@@ -119,7 +119,7 @@ resource "aws_iam_policy_attachment" "bucket-role-attach" {
   policy_arn = aws_iam_policy.access-s3-policy.arn
 }
 resource "aws_iam_instance_profile" "access-s3-profile" {
-  name = "access-s3-profile"
+  name = "s3-access-profile"
   role = aws_iam_role.access_bucket_role.name
 }
 resource "aws_instance" "ansible_provisioning_server" {
@@ -147,11 +147,12 @@ sudo apt-add-repository -y ppa:ansible/ansible
 curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
 echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
 sudo apt update
-sudo apt install openjdk-11-jdk -y
-sudo apt install awscli -y
-sudo apt install ansible -y
-sudo apt install git -y
 sudo apt install unzip -y
+sudo apt install ansible -y
+sudo apt install openjdk-11-jdk -y
+sudo apt install maven -y
+sudo apt install awscli -y
+sudo apt install git -y
 sudo apt install jenkins -y
 sudo systemctl start jenkins.service 
 EOF
@@ -225,7 +226,8 @@ resource "null_resource" "InitialSetup" {
       "#!/bin/bash",
       "ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1",
       "cat ~/.ssh/id_rsa.pub",
-      "while ! which aws; do sleep 10; echo \"Sleeping for a bit...\"; done",
+      "while ! which unzip; do sleep 10; echo \"Sleeping for a bit to make sure unzip is installed.\"; done",
+      "while ! which aws; do sleep 10; echo \"Sleeping for a bit to make sure awscli is installed.\"; done",
       "sudo aws s3 cp /home/ubuntu/.ssh/id_rsa.pub s3://${aws_s3_bucket.b1.id}/id_rsa.pub",
       "sudo aws s3 cp s3://${aws_s3_bucket.b1.id}/ansible.zip .",
       "unzip ansible.zip",
@@ -277,6 +279,7 @@ resource "null_resource" "FinalSetup" {
     inline = [
       "#!/bin/bash",
       "ansible-playbook -i ./inventory tomcat.yml",
+      "sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
     ]
   }
   depends_on = [

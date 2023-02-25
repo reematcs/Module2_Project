@@ -1,0 +1,6 @@
+---
+- name: copy war to tomcat8 webapps dir
+  hosts: webservers
+  become: true
+  roles:
+    - role: deploy_war_role
