@@ -63,8 +63,23 @@ Module2_Project
 
 
 # Terraform:
+## 1. IAM role
+## 2. S3 bucket
+## 3. Provisioning and Deployment Servers
+## 4. Ansible Provisioning
+### 1. Inventory file in Ansible Provisioning Directory
+### 2. Zipping Ansible Provisioning Directory
+### 3. Upload to S3 bucket
+### 4. Ansible Provisioning Directory Download to Provisioning Server
+## 5. SSH Keys
+## 6. Running Ansible Playbooks
 
-# Ansible: 
+# Ansible:
+## 1. Tomcat Setup on Deployment Server
+## 2. Clone and Build Hello World WAR File
+## Deploy WAR File and Restart Tomcat on Deployment Server
 
 # Jenkins: 
+## Manual Setup of Pipeline
+## Testing and Validating Pipeline
 
