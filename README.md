@@ -65,7 +65,7 @@ Module2_Project
 # Terraform:
 ## 1. Setup
 
-```
+```HCL
 terraform{
 required_version = ">= 1.0" # semver 
       required_providers {
@@ -77,7 +77,7 @@ required_version = ">= 1.0" # semver
 }
 ```
 
-```
+```HCL
 locals {
   ami_id = "${var.ami_id}"
   vpc_id = "${var.vpc_id}"
