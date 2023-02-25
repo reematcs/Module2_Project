@@ -1,274 +1,91 @@
 # Name
 
-Automating WAR file artifact deployment
+Using Terraform and Ansible to provision, Jenkins to Automate Maven packing of WAR file and deployment to Tomcat 9
 
 # Description
 
+## Overview
+
+Terraform, an open-source IaC is used to spin up a EC2 server instance, a deployment instance and S3 bucket to upload ansible provisioning playbooks. 
+## Directory Structure
+
+Module2_Project
+├── README.md
+├── ansible_provisioning
+│   ├── deploy_war.yml
+│   ├── deploy_war_role
+│   │   ├── README.md
+│   │   ├── defaults
+│   │   │   └── main.yml
+│   │   ├── files
+│   │   ├── handlers
+│   │   │   └── main.yml
+│   │   ├── meta
+│   │   │   └── main.yml
+│   │   ├── tasks
+│   │   │   └── main.yml
+│   │   ├── templates
+│   │   ├── tests
+│   │   │   ├── inventory
+│   │   │   └── test.yml
+│   │   └── vars
+│   │       └── main.yml
+│   ├── localhost
+│   │   ├── host-manager.xml
+│   │   └── manager.xml
+│   ├── maven_build_role
+│   │   ├── README.md
+│   │   ├── defaults
+│   │   │   └── main.yml
+│   │   ├── files
+│   │   ├── handlers
+│   │   │   └── main.yml
+│   │   ├── meta
+│   │   │   └── main.yml
+│   │   ├── tasks
+│   │   │   └── main.yml
+│   │   ├── templates
+│   │   ├── tests
+│   │   │   ├── inventory
+│   │   │   └── test.yml
+│   │   └── vars
+│   │       └── main.yml
+│   ├── terraform.tfstate
+│   ├── tomcat-users.xml
+│   └── tomcat_playbook.yml
+├── aws_terraform.pem
+├── bucket.tf
+├── main.tf
+├── outputs.tf
+├── providers.tf
+├── scripts.sh
+├── terraform.tfstate
+├── terraform.tfstate.backup
+└── variables.tf
+
+21 directories, 32 files
+
+## Summary of Steps Performed:
+
+1. [Terraform:](#terraform)
+    1. Spun up S3 bucket
+    2. Spun up 2 EC2 instances, provisioning server and deployment, and generated their public and private ips. Attached necessary IAM role to EC2 instances to access S3 bucket.
+    3. Placed Ansible provisioning playbooks and roles, with inventory file for deployment ip address. Zipped using Terraform and uploaded to S3 bucket.
+    4. Downloaded ansible playbook using awscli commands to EC2 provisioning server. Unzipped. Generated ssh keys to connect with deployment server and uploaded to S3 bucket.
+    5. Downloaded and appended ssh public key using awscli commands to deployment instance in authorized_keys.
+    6. Used Terraform to run ansible playbooks.
+2. [Ansible:](#ansible)
+    1. Tomcat setup on deployment server.
+    2. Clone and build Hello World WAR file using maven on provisioning server.
+    3. Deploy WAR file and restart Tomcat on deployment server.
+3. [Jenkins:](#jenkins)
+    1. Manual setup of pipeline in [previous step](#ansible)
+    2. Testing and validating pipeline.
+
+
+# Terraform:
+
+# Ansible: 
+
+# Jenkins: 
 
-CI/CD Deployment Using Ansible CM Tool
-Course-end Project 1
-
-DESCRIPTION
-
-You are a DevOps engineer at XYZ Ltd. Your company is working on a Java application and wants to automate WAR file artifact deployment so that they don’t have to perform WAR deployment on Tomcat/Jetty web containers. Automate Ansible integration with Jenkins CI server so that we can run and execute playbooks to deploy custom WAR files to a web container and then perform restart for the web container.
-
- 
-
-Steps to Perform:
-
-1. Configure Terraform to run EC2 instance and setup Jenkins server/Ansible provisioning
-2. Install Ansible plugins in Jenkins CI server
-3. Prepare Ansible playbook to run Maven build on Jenkins CI server
-4. Prepare Ansible playbook to execute deployment steps on the remote web container with restart of the web container post deployment
-
-
-
-
-
-Markdown Cheatsheet<a name="TOP"></a>
-===================
-
-- - - - 
-# Heading 1 #
-
-    Markup :  # Heading 1 #
-
-    -OR-
-
-    Markup :  ============= (below H1 text)
-
-## Heading 2 ##
-
-    Markup :  ## Heading 2 ##
-
-    -OR-
-
-    Markup: --------------- (below H2 text)
-
-### Heading 3 ###
-
-    Markup :  ### Heading 3 ###
-
-#### Heading 4 ####
-
-    Markup :  #### Heading 4 ####
-
-
-Common text
-
-    Markup :  Common text
-
-_Emphasized text_
-
-    Markup :  _Emphasized text_ or *Emphasized text*
-
-~~Strikethrough text~~
-
-    Markup :  ~~Strikethrough text~~
-
-__Strong text__
-
-    Markup :  __Strong text__ or **Strong text**
-
-___Strong emphasized text___
-
-    Markup :  ___Strong emphasized text___ or ***Strong emphasized text***
-
-[Named Link](http://www.google.fr/ "Named link title") and http://www.google.fr/ or <http://example.com/>
-
-    Markup :  [Named Link](http://www.google.fr/ "Named link title") and http://www.google.fr/ or <http://example.com/>
-
-[heading-1](#heading-1 "Goto heading-1")
-    
-    Markup: [heading-1](#heading-1 "Goto heading-1")
-
-Table, like this one :
-
-First Header  | Second Header
-------------- | -------------
-Content Cell  | Content Cell
-Content Cell  | Content Cell
-
-```
-First Header  | Second Header
-------------- | -------------
-Content Cell  | Content Cell
-Content Cell  | Content Cell
-```
-
-Adding a pipe `|` in a cell :
-
-First Header  | Second Header
-------------- | -------------
-Content Cell  | Content Cell
-Content Cell  | \|
-
-```
-First Header  | Second Header
-------------- | -------------
-Content Cell  | Content Cell
-Content Cell  |  \| 
-```
-
-Left, right and center aligned table
-
-Left aligned Header | Right aligned Header | Center aligned Header
-| :--- | ---: | :---:
-Content Cell  | Content Cell | Content Cell
-Content Cell  | Content Cell | Content Cell
-
-```
-Left aligned Header | Right aligned Header | Center aligned Header
-| :--- | ---: | :---:
-Content Cell  | Content Cell | Content Cell
-Content Cell  | Content Cell | Content Cell
-```
-
-`code()`
-
-    Markup :  `code()`
-
-```javascript
-    var specificLanguage_code = 
-    {
-        "data": {
-            "lookedUpPlatform": 1,
-            "query": "Kasabian+Test+Transmission",
-            "lookedUpItem": {
-                "name": "Test Transmission",
-                "artist": "Kasabian",
-                "album": "Kasabian",
-                "picture": null,
-                "link": "http://open.spotify.com/track/5jhJur5n4fasblLSCOcrTp"
-            }
-        }
-    }
-```
-
-    Markup : ```javascript
-             ```
-
-* Bullet list
-    * Nested bullet
-        * Sub-nested bullet etc
-* Bullet list item 2
-
-~~~
- Markup : * Bullet list
-              * Nested bullet
-                  * Sub-nested bullet etc
-          * Bullet list item 2
-
--OR-
-
- Markup : - Bullet list
-              - Nested bullet
-                  - Sub-nested bullet etc
-          - Bullet list item 2 
-~~~
-
-1. A numbered list
-    1. A nested numbered list
-    2. Which is numbered
-2. Which is numbered
-
-~~~
- Markup : 1. A numbered list
-              1. A nested numbered list
-              2. Which is numbered
-          2. Which is numbered
-~~~
-
-- [ ] An uncompleted task
-- [x] A completed task
-
-~~~
- Markup : - [ ] An uncompleted task
-          - [x] A completed task
-~~~
-
-- [ ] An uncompleted task
-    - [ ] A subtask
-
-~~~
- Markup : - [ ] An uncompleted task
-              - [ ] A subtask
-~~~
-
-> Blockquote
->> Nested blockquote
-
-    Markup :  > Blockquote
-              >> Nested Blockquote
-
-_Horizontal line :_
-- - - -
-
-    Markup :  - - - -
-
-_Image with alt :_
-
-![picture alt](http://via.placeholder.com/200x150 "Title is optional")
-
-    Markup : ![picture alt](http://via.placeholder.com/200x150 "Title is optional")
-
-Foldable text:
-
-<details>
-  <summary>Title 1</summary>
-  <p>Content 1 Content 1 Content 1 Content 1 Content 1</p>
-</details>
-<details>
-  <summary>Title 2</summary>
-  <p>Content 2 Content 2 Content 2 Content 2 Content 2</p>
-</details>
-
-    Markup : <details>
-               <summary>Title 1</summary>
-               <p>Content 1 Content 1 Content 1 Content 1 Content 1</p>
-             </details>
-
-```html
-<h3>HTML</h3>
-<p> Some HTML code here </p>
-```
-
-Link to a specific part of the page:
-
-[Go To TOP](#TOP)
-   
-    Markup : [text goes here](#section_name)
-              section_title<a name="section_name"></a>    
-
-Hotkey:
-
-<kbd>⌘F</kbd>
-
-<kbd>⇧⌘F</kbd>
-
-    Markup : <kbd>⌘F</kbd>
-
-Hotkey list:
-
-| Key | Symbol |
-| --- | --- |
-| Option | ⌥ |
-| Control | ⌃ |
-| Command | ⌘ |
-| Shift | ⇧ |
-| Caps Lock | ⇪ |
-| Tab | ⇥ |
-| Esc | ⎋ |
-| Power | ⌽ |
-| Return | ↩ |
-| Delete | ⌫ |
-| Up | ↑ |
-| Down | ↓ |
-| Left | ← |
-| Right | → |
-
-Emoji:
-
-:exclamation: Use emoji icons to enhance text. :+1:  Look up emoji codes at [emoji-cheat-sheet.com](http://emoji-cheat-sheet.com/)
-
-    Markup : Code appears between colons :EMOJICODE:

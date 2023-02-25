@@ -2,12 +2,22 @@
 #   type = string
 #   default = "test"
 # }
+
+variable "git_repo" {
+    default = "https://github.com/koddas/war-web-project.git"
+    #default = "https://github.com/shekhargulati/boot-angular-pagination-example-app"
+}
+
+variable "project_dir" {
+  default = "sparkjava-hello-world-1.0"
+}
+
 variable "ami_id" {
     default = "ami-00eeedc4036573771"
   
 }
 variable "vpc_id"{
-    default="vpc-04fcb550eef68165c"
+    default="vpc-056d622c7a32e4729"
 }
 
 variable "bucket_name" {
@@ -27,18 +37,18 @@ variable "acl_value" {
 
 variable "aws_access_key" {
 
-default = "ASIA37M36QKRUHVFPJDD"
+default = "ASIA37M36QKRRW6KKCMU"
 
 }
 
 variable "aws_secret_key" {
 
-default = "gdQIS7NV5vxAvE5oKp8E32j8KgddZvlGZYI/rgJO"
+default = "UMfL7rnqB2UEJYD7TdKh602nrFtWU3P4/5WWJmFW"
 
 }
 
 variable "aws_token" {
-  default = "FwoGZXIvYXdzEIr//////////wEaDG172RFhQDI17u+ffSK3AWkdRajWIaPef0ZpTkcy/UvpyVbocULuKcxlVO3GkFGYDDx+7wB01jhOqsLzkynhd/xD47XQpIIEOQETKLn/+K5nK7Yit08IeTJ2KF3UjPFfhyEN0IXfI0mMdvJ8Yemf2k5j2GF5ibn/MVcoY1g4hiwkj/StuTDCTRcLTswA6Nn3ayeYXQNvDtfWGJ3glWkJb5PNaVnJjlE9gL8ZhGp84uEWO7cz3+bHVSTHBzvTMB/W3LaSW94ziijBp+WfBjItjBWeWw71r8Y+rCiRO2yzLzJq91Z0V+krO6W/HNEA4Th9Hc1jkMi+h+r8rsgU"
+  default = "FwoGZXIvYXdzEJX//////////wEaDI6ANg0tI9z8nuyOdCK3ASfYFf4Vr70PT6/tFORu1IR3E0f6R08Uut5kQ2j8Nkji2SX/1nQ8i4Fa0TNM6F94W8n8LOc893l/Vc3gxdVmU4Z7DfyiLpa7k96RUcsOsJnZFL4xlkxHF+5X2XKJlfnAbXZBe+VWSu8mIeGGQfUE4RRIgxnChMtEvMcQr3Z6AdiT4T5eqgyR8l/KN3/dVX0XypvRJ2+z21T81EjId8a8ipjGT/81DZguruu+AX2jRrK2AMr41fIt/Cj12eefBjItRwWsnqir4AbSluyStN0yQi28dsQXl08lRx857yy8SoxX9l5kU790ag9fRryk"
 }
 variable "region" {
 

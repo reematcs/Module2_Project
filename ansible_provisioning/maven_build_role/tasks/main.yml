@@ -1,0 +1,11 @@
+---
+# tasks file for maven_build_role
+- name: clone repo
+  git:
+    repo: https://github.com/kliakos/sparkjava-war-example.git
+    dest: /home/ubuntu/sparkjava-war-example
+    clone: yes
+- name: run maven command mvn package
+  shell:
+    chdir: sparkjava-war-example
+    cmd: mvn package

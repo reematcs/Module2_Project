@@ -28,7 +28,7 @@
   - name: overwrite localhost in conf/Catalina
     copy:
       src: localhost/
-      dest: /opt/tomcat/conf/Catalina/
+      dest: /opt/tomcat/conf/Catalina/localhost
 
   - name: overwrite localhost in conf/Catalina
     copy:

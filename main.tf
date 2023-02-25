@@ -17,8 +17,8 @@ locals {
   private_key_path = "${var.aws_terraform_keyname}.pem"
 }
 
-resource "aws_security_group" "worker_sec_group" {
-	name   = "worker_sec_group"
+resource "aws_security_group" "deployment_sec_group" {
+	name   = "deployment_sec_group"
 	vpc_id = local.vpc_id
 
   ingress {
@@ -168,16 +168,16 @@ EOF
 
 }
 
-resource "aws_instance" "ansible_worker" {
+resource "aws_instance" "ansible_deployment" {
   ami = local.ami_id
   instance_type = "t2.micro"
   associate_public_ip_address = "true"
-  vpc_security_group_ids =[aws_security_group.worker_sec_group.id]
+  vpc_security_group_ids =[aws_security_group.deployment_sec_group.id]
   key_name = local.key_name
   iam_instance_profile = aws_iam_instance_profile.access-s3-profile.name
 
   tags = {
-    Name = "Ansible_Provisioning_Worker"
+    Name = "Ansible_Provisioning_deployment"
   }
 
   connection {
@@ -247,11 +247,11 @@ resource "null_resource" "InitialSetup" {
 }
 
 
-resource "null_resource" "CopyPubToWorker" {
+resource "null_resource" "CopyPubTodeployment" {
  
   connection {
     type = "ssh"
-    host = aws_instance.ansible_worker.public_ip
+    host = aws_instance.ansible_deployment.public_ip
     user = local.ssh_user
     private_key = file(local.private_key_path)
     timeout = "4m"
@@ -286,10 +286,12 @@ resource "null_resource" "FinalSetup" {
     inline = [
       "#!/bin/bash",
       "ansible-playbook -i ./inventory tomcat_playbook.yml",
+      "ansible-playbook -i inventory deploy_war.yml",
+      "echo \"URL: http://${aws_instance.ansible_deployment.public_ip}:8080/sparkjava-hello-world-1.0/hello\"",
       "sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
     ]
   }
   depends_on = [
-    null_resource.CopyPubToWorker
+    null_resource.CopyPubTodeployment
   ]
 }

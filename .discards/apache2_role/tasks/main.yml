@@ -5,11 +5,11 @@
 
 - name: enabled mod_rewrite
   apache2_module: name=rewrite state=present
-# disable mpm_worker and ignore warnings about missing mpm module
-- name: disable mpm_worker and ignore warnings
+# disable mpm_deployment and ignore warnings about missing mpm module
+- name: disable mpm_deployment and ignore warnings
   apache2_module:
     state: absent
-    name: mpm_worker
+    name: mpm_deployment
     ignore_configcheck: True
   
   notify:

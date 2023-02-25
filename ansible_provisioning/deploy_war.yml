@@ -1,6 +1,12 @@
 ---
-- name: copy war to tomcat8 webapps dir
+- name: clone repo from github and build package with maven
+  hosts: localhost
+  become: true
+  roles:
+    - role: maven_build_role
+- name: deploy war file to tomcat in deployment
   hosts: webservers
   become: true
   roles:
     - role: deploy_war_role
+    
