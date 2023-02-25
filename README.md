@@ -67,8 +67,6 @@ Module2_Project
 
 Inside `main.tf`, we ensure that Terraform uses a specific version for Terraform and our required providers (aws).
 
-# you can use the semantic version.terraform
-
 ```HCL
 terraform{
 required_version = ">= 1.0" # semver 
