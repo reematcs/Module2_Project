@@ -151,6 +151,16 @@ resource "aws_security_group" "server_sec_group" {
 ```
 
 ### 3. S3 bucket
+In `variables.tf`, the bucket name and acl are defined.
+
+```HCL
+variable "bucket_name" {
+    default = "project2-reem-ansibledir"
+}
+variable "acl_value" {
+    default = "public"
+}
+```
 
 In `bucket.tf`, the `S3` bucket is defined, with a public access control list (ACL):
 
@@ -166,7 +176,7 @@ resource "aws_s3_bucket" "b1" {
 
 resource "aws_s3_bucket_acl" "ansible_provision" {
   bucket = aws_s3_bucket.b1.id
-  acl    = "public"
+  acl    = "${var.acl_value}"
 }
 ```
 ### 4. IAM role
@@ -236,7 +246,6 @@ resource "aws_iam_instance_profile" "access-s3-profile" {
   role = aws_iam_role.access_bucket_role.name
 }
 ```
-
 ## 2. Provisioning and Deployment Servers
 ### 1. Inventory file in Ansible Provisioning Directory
 ### 2. Zipping Ansible Provisioning Directory

@@ -19,6 +19,14 @@ variable "aws_token" {
 variable "region" {
     default = "region"
 }
+
+variable "bucket_name" {
+    default = "project2-reem-ansibledir"
+}
+variable "acl_value" {
+    default = "public"
+}
+
 variable "ansible_zip" {
   default = "ansible.zip"
 }
@@ -28,10 +36,4 @@ variable "git_repo" {
 }
 variable "project_dir" {
   default = "sparkjava-hello-world-1.0"
-}
-variable "bucket_name" {
-    default = "project2-reem-ansibledir"
-}
-variable "acl_value" {
-    default = "private"
 }
