@@ -1,6 +1,6 @@
 ---
 # tasks file for deploy_war_role
-- name: clone repo
+- name: copy war file into tomcat webapps directory
   copy:
     src: /home/ubuntu/sparkjava-war-example/target/sparkjava-hello-world-1.0.war
     dest: /opt/tomcat/webapps/sparkjava-hello-world-1.0.war

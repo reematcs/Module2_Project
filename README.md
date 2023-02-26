@@ -14,7 +14,6 @@ Module2_Project
 ├── ansible_provisioning
 │   ├── deploy_war.yml
 │   ├── deploy_war_role
-│   │   ├── README.md
 │   │   ├── tasks
 │   │   │   └── main.yml
 │   │   └── tests
@@ -24,7 +23,6 @@ Module2_Project
 │   │   ├── host-manager.xml
 │   │   └── manager.xml
 │   ├── maven_build_role
-│   │   ├── README.md
 │   │   ├── tasks
 │   │   │   └── main.yml
 │   │   └── tests
@@ -450,19 +448,287 @@ resource "null_resource" "InitialSetup" {
 }
 ```
 
-We will stop discussing Terraform for now and jump to [ansible](#3-ansible-provisioning).
+### Copy SSH Public Key to Deployment Server
 
-## 3. Ansible Provisioning
+In order to allow ansible to connect to the deployment server from the provisioning server, we need to copy the public key from the `S3` bucket to the deployment server.
 
 
+```HCL
 
-## 4. SSH Keys
-## 5. Running Ansible Playbooks
+resource "null_resource" "CopyPubTodeployment" {
+ 
+  connection {
+    type = "ssh"
+    host = aws_instance.ansible_deployment.public_ip
+    user = local.ssh_user
+    private_key = file(local.private_key_path)
+    timeout = "4m"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "#!/bin/bash",
+      "while ! which aws; do sleep 10; echo \"Sleeping for a bit...\"; done",
+      "sudo aws s3 cp s3://${aws_s3_bucket.b1.id}/id_rsa.pub .",
+      "cat id_rsa.pub >> ~/.ssh/authorized_keys",
+    ]
+  }
+  depends_on = [
+    null_resource.InitialSetup
+  ]
+}
+```
+
+Above, we use a `null resource` to connect to the deployment server, check that `awscli` is installed, then copy the public key into authorize_keys.
+
+```bash
+sudo aws s3 cp s3://${aws_s3_bucket.b1.id}/id_rsa.pub .
+cat id_rsa.pub >> ~/.ssh/authorized_keys
+```
+
+We will halt discussing our Terraform setup for now and jump to [ansible](#ansible), where we run `ansible-playbook` commands from within Terraform using playbooks.
+
 
 # Ansible:
+
 ## 1. Tomcat Setup on Deployment Server
-## 2. Clone and Build Hello World WAR File
-## 3. Deploy WAR File and Restart Tomcat on Deployment Server
+
+Here is the folder structure for `ansible_provisioning`:
+
+```
+ansible_provisioning
+├── tomcat_playbook.yml
+├── deploy_war.yml
+├── inventory
+├── tomcat_installation_role
+│   ├── README.md
+│   ├── files
+│   │   ├── tomcat-users.xml
+│   │   └── localhost
+│   │       ├── host-manager.xml
+│   │       └── manager.xml
+│   ├── tests
+│   │   ├── test.yml
+│   │   └── inventory
+│   └── tasks
+│       └── main.yml
+├── deploy_war_role
+│   ├── README.md
+│   ├── tests
+│   │   ├── test.yml
+│   │   └── inventory
+│   └── tasks
+│       └── main.yml
+└── maven_build_role
+    ├── README.md
+    ├── tests
+    │   ├── test.yml
+    │   └── inventory
+    └── tasks
+        └── main.yml
+```
+
+The two YAML files `tomcat_playbook.yml` and `deploy_war.yml` perform Tomcat installation and WAR deployment on the deployment server from the ansible provisioning server. They use the `inventory` file with our host groups and the roles defined the the `*_role` directories.
+
+We use 
+`tomcat_playbook.yml` and directory `tomcat_installation_role`. The YAML instructions here are a slightly-modified version of the ones from [devopstricks.in](https://www.devopstricks.in/installing-tomcat-server-on-ubuntu-22-04-with-ansible/).
+
+#### 1. `tomcat_playbook.yml`
+
+
+```YAML
+- name: Install Tomcat
+  hosts: webservers
+  become: true
+  vars:
+    - TOMCAT9_URL: "https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.72/bin/apache-tomcat-9.0.72.tar.gz" 
+      
+  roles:
+    - role: tomcat_installation_role
+```
+
+This specifies that the task is applied to the host group `webservers` and requires privilege escalation to `root`. It also defines the variable `TOMCAT9_URL` with the URL for tomcat version 9, and calls on the role defined in the `tomcat_installation_role` directory.
+
+#### 2. Tomcat Installation
+
+```
+tomcat_installation_role
+├── files
+│   ├── localhost
+│   │   ├── host-manager.xml
+│   │   └── manager.xml
+│   └── tomcat-users.xml
+├── tasks
+│   └── main.yml
+└── tests
+    ├── inventory
+    └── test.yml
+
+5 directories, 6 files
+```
+
+1. Files:
+
+As a quick-workaround to configuring gui-manager admin settings (not recommended): 
+  1. We modify and overwrite the built-in `tomcat-users.xml` configuration file as suggested with username: `admin`, password `cu1984`.
+  2. To allow external access to the manager, we need to modify `host-manager.xml` and `manager.xml` and place them under the localhost directory under `conf/Catalina`. You can see this in the next section.
+
+2. Tasks:
+
+`tomcat_installation_role/tasks/main.yml`
+
+```YAML
+---
+# tasks file for tomcat_installation_role
+- name: Update apt-get repo and cache
+  apt: update_cache=yes force_apt_get=yes cache_valid_time=3600 
+
+- name: Install Java
+  apt:
+    name: openjdk-11-jdk
+    state: present
+
+- name: Download Tomcat
+  get_url:
+    url: "{{ TOMCAT9_URL }}"
+    dest: /tmp/
+    validate_certs: no
+
+- name: Creating Apache Tomcat home directory.
+  command: mkdir /opt/tomcat   
+    
+- name: Extract Tomcat
+  shell: tar -xzvf /tmp/apache-tomcat-*tar.gz -C /opt/tomcat --strip-components=1
+
+- name: overwrite localhost in conf/Catalina
+  copy:
+    src: localhost/
+    dest: /opt/tomcat/conf/Catalina/localhost
+
+- name: overwrite tomcat-users.xml in conf
+  copy:
+    src: tomcat-users.xml
+    dest: /opt/tomcat/conf/tomcat-users.xml
+
+- name: Start Tomcat
+  shell: /opt/tomcat/bin/startup.sh
+  ignore_errors: true
+
+- name: Wait for Tomcat to start
+  wait_for:
+    host: localhost
+    port: 8080
+    state: started
+
+- name: Connect to Tomcat server on port 8080 and check status 200 - Try 5 times
+  tags: test
+  uri:
+    url: http://localhost:8080
+  register: result
+  until: "result.status == 200"
+  retries: 5
+  delay: 10
+```
+
+This role is clear, but can be explained further in the link referenced above.
+
+
+
+## 2. Deployment
+
+We use `deploy_war.yml`, and directories `maven_build_role`, and `deploy_war_role`
+
+```YAML
+---
+- name: clone repo from github and build package with maven
+  hosts: localhost
+  become: true
+  roles:
+    - role: maven_build_role
+- name: deploy war file to tomcat in deployment
+  hosts: webservers
+  become: true
+  roles:
+    - role: deploy_war_role
+```
+
+### 2. Clone and Build Hello World WAR File
+
+```YAML
+---
+# tasks file for maven_build_role
+- name: clone repo
+  git:
+    repo: https://github.com/kliakos/sparkjava-war-example.git
+    dest: /home/ubuntu/sparkjava-war-example
+    clone: yes
+- name: run maven command mvn package
+  shell:
+    chdir: sparkjava-war-example
+    cmd: mvn package
+```
+
+### 3. Deploy WAR File and Restart Tomcat on Deployment Server
+
+```YAML
+---
+# tasks file for deploy_war_role
+- name: clone repo
+  copy:
+    src: /home/ubuntu/sparkjava-war-example/target/sparkjava-hello-world-1.0.war
+    dest: /opt/tomcat/webapps/sparkjava-hello-world-1.0.war
+  
+- name: Shutdown Tomcat
+  shell: /opt/tomcat/bin/shutdown.sh
+  ignore_errors: true
+
+- name: Start Tomcat
+  shell: /opt/tomcat/bin/startup.sh
+  ignore_errors: true
+
+- name: Wait for Tomcat to start
+  wait_for:
+    host: localhost
+    port: 8080
+    state: started
+
+- name: Connect to Tomcat server on port 8080 and check status 200 - Try 5 times
+  tags: test
+  uri:
+    url: http://localhost:8080
+  register: result
+  until: "result.status == 200"
+  retries: 5
+  delay: 10
+```
+
+## 3. Run Ansible Plays in Terraform:
+
+```HCL
+resource "null_resource" "FinalSetup" {
+ 
+  connection {
+    type = "ssh"
+    host = aws_instance.ansible_provisioning_server.public_ip
+    user = local.ssh_user
+    private_key = file(local.private_key_path)
+    timeout = "4m"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "#!/bin/bash",
+      "ansible-playbook -i ./inventory tomcat_playbook.yml",
+      "ansible-playbook -i inventory deploy_war.yml",
+      "echo \"URL: http://${aws_instance.ansible_deployment.public_ip}:8080/sparkjava-hello-world-1.0/hello\"",
+      "sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
+    ]
+  }
+  depends_on = [
+    null_resource.CopyPubTodeployment
+  ]
+}
+```
 
 # Jenkins: 
 ## 1. Manual Setup of Pipeline
