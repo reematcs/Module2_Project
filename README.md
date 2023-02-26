@@ -2,6 +2,41 @@
 
 Using Terraform and Ansible to provision, Jenkins to Automate Maven packing of WAR file and deployment to Tomcat 9
 
+# Table Of Contents
+<!-- TOC start -->
+- [Name](#name)
+- [Description](#description)
+  * [Overview](#overview)
+  * [Directory Structure](#directory-structure)
+  * [Usage](#usage)
+  * [Summary of Steps Performed:](#summary-of-steps-performed)
+- [Terraform:](#terraform)
+  * [1. Setup](#1-setup)
+    + [1. Basic Setup](#1-basic-setup)
+    + [2. Security Groups](#2-security-groups)
+    + [3. S3 bucket](#3-s3-bucket)
+    + [4. IAM role](#4-iam-role)
+  * [2. Provisioning and Deployment Server Instances](#2-provisioning-and-deployment-server-instances)
+    + [1. Provisioning Server](#1-provisioning-server)
+    + [2. Deployment Server](#2-deployment-server)
+    + [3. Inventory file in Ansible Provisioning Directory](#3-inventory-file-in-ansible-provisioning-directory)
+    + [4. Zipping Ansible Provisioning Directory](#4-zipping-ansible-provisioning-directory)
+    + [5. Upload to S3 bucket](#5-upload-to-s3-bucket)
+    + [6. Ansible Provisioning Directory Download to Provisioning Server](#6-ansible-provisioning-directory-download-to-provisioning-server)
+    + [Copy SSH Public Key to Deployment Server](#copy-ssh-public-key-to-deployment-server)
+- [Ansible:](#ansible)
+  * [1. Tomcat Setup on Deployment Server](#1-tomcat-setup-on-deployment-server)
+      - [1. `tomcat_playbook.yml`](#1-tomcat_playbookyml)
+      - [2. Tomcat Installation](#2-tomcat-installation)
+  * [2. Build and Deploy WAR](#2-build-and-deploy-war)
+    + [2. Clone and Build Hello World WAR File](#2-clone-and-build-hello-world-war-file)
+    + [3. Deploy WAR File and Restart Tomcat on Deployment Server](#3-deploy-war-file-and-restart-tomcat-on-deployment-server)
+  * [3. Run Ansible Plays in Terraform:](#3-run-ansible-plays-in-terraform)
+- [Jenkins: ](#jenkins)
+  * [1. Manual Setup of Pipeline](#1-manual-setup-of-pipeline)
+  * [2. Testing and Validating Pipeline](#2-testing-and-validating-pipeline)
+<!-- TOC end -->
+<!-- TOC -->
 # Description
 
 ## Overview
