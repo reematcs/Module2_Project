@@ -5,25 +5,25 @@
     src: /home/ubuntu/sparkjava-war-example/target/sparkjava-hello-world-1.0.war
     dest: /opt/tomcat/webapps/sparkjava-hello-world-1.0.war
   
-  - name: Shutdown Tomcat
-    shell: /opt/tomcat/bin/shutdown.sh
-    ignore_errors: true
+- name: Shutdown Tomcat
+  shell: /opt/tomcat/bin/shutdown.sh
+  ignore_errors: true
 
-  - name: Start Tomcat
-    shell: /opt/tomcat/bin/startup.sh
-    ignore_errors: true
-  
-  - name: Wait for Tomcat to start
-    wait_for:
-      host: localhost
-      port: 8080
-      state: started
-  
-  - name: Connect to Tomcat server on port 8080 and check status 200 - Try 5 times
-    tags: test
-    uri:
-      url: http://localhost:8080
-    register: result
-    until: "result.status == 200"
-    retries: 5
-    delay: 10
+- name: Start Tomcat
+  shell: /opt/tomcat/bin/startup.sh
+  ignore_errors: true
+
+- name: Wait for Tomcat to start
+  wait_for:
+    host: localhost
+    port: 8080
+    state: started
+
+- name: Connect to Tomcat server on port 8080 and check status 200 - Try 5 times
+  tags: test
+  uri:
+    url: http://localhost:8080
+  register: result
+  until: "result.status == 200"
+  retries: 5
+  delay: 10
