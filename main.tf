@@ -195,7 +195,7 @@ data "archive_file" "data_backup" {
  ]
  
 }
-# }
+
 # Upload an object
 resource "aws_s3_object" "upload_ansible" {
 #    count = data.aws_s3_bucket.b1.id ? 1 : 0
@@ -233,7 +233,8 @@ resource "null_resource" "InitialSetup" {
     ]
   }
   depends_on = [
-    aws_s3_object.upload_ansible
+    aws_s3_object.upload_ansible, 
+    aws_instance.ansible_provisioning_server
   ]
 }
 
