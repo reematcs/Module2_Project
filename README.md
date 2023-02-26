@@ -5,6 +5,7 @@ Using Terraform and Ansible to provision, Jenkins to Automate Maven packing of W
 # Table Of Contents
 <!-- TOC start -->
 - [Name](#name)
+- [Table of Contents](#table-of-contents)
 - [Description](#description)
   * [Overview](#overview)
   * [Directory Structure](#directory-structure)
@@ -44,7 +45,7 @@ Using Terraform and Ansible to provision, Jenkins to Automate Maven packing of W
 Terraform, an open-source IaC is used to spin up a EC2 server instance, a deployment instance and S3 bucket to upload ansible provisioning playbooks. 
 ## Directory Structure
 ```
-Module2_Project
+Project
 ├── README.md
 ├── main.tf
 ├── aws_terraform.pem
@@ -64,7 +65,7 @@ Module2_Project
 4. Copy Ubuntu AMI id and place in `variables.tf` as the default value for `ami_id`.
 5. Copy AWS access key, secret key, and token and place in `variables.tf` as the default value for `aws_access_key`, `aws_secret_key`, `aws_token`.
 
-## Summary of Steps Performed:
+## Summary of Steps Performed
 
 1. [Terraform:](#terraform)
     1. Spun up `S3` bucket
@@ -82,7 +83,7 @@ Module2_Project
     2. Testing and validating pipeline.
 
 
-# Terraform:
+# Terraform
 ## 1. Setup
 ### 1. Basic Setup
 Inside `main.tf`, we ensure that Terraform uses a specific version for Terraform and our required providers (aws).
@@ -511,7 +512,7 @@ cat id_rsa.pub >> ~/.ssh/authorized_keys
 We will halt discussing our Terraform setup for now and jump to [ansible](#ansible), where we run `ansible-playbook` commands from within Terraform using playbooks.
 
 
-# Ansible:
+# Ansible
 
 ## 1. Tomcat Setup on Deployment Server
 
@@ -722,7 +723,7 @@ deploy_war_role
   delay: 10
 ```
 
-## 3. Run Ansible Plays in Terraform:
+## 3. Run Ansible Plays in Terraform
 
 ```HCL
 resource "null_resource" "FinalSetup" {
@@ -755,7 +756,7 @@ null_resource.FinalSetup (remote-exec): URL: http://18.219.223.198:8080/sparkjav
 null_resource.FinalSetup (remote-exec): 7275a2536a9f4059a8f0a840734701cf
 ```
 
-# Jenkins: 
+# Jenkins
 ## 1. Manual Setup of Pipeline
 ## 2. Testing and Validating Pipeline
 
