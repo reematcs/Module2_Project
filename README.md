@@ -23,14 +23,14 @@ Using Terraform and Ansible to provision, Jenkins to Automate Maven packing of W
     + [4. Zipping Ansible Provisioning Directory](#4-zipping-ansible-provisioning-directory)
     + [5. Upload to S3 bucket](#5-upload-to-s3-bucket)
     + [6. Ansible Provisioning Directory Download to Provisioning Server](#6-ansible-provisioning-directory-download-to-provisioning-server)
-    + [Copy SSH Public Key to Deployment Server](#copy-ssh-public-key-to-deployment-server)
+    + [7. Copy SSH Public Key to Deployment Server](#copy-ssh-public-key-to-deployment-server)
 - [Ansible:](#ansible)
   * [1. Tomcat Setup on Deployment Server](#1-tomcat-setup-on-deployment-server)
       - [1. `tomcat_playbook.yml`](#1-tomcat_playbookyml)
       - [2. Tomcat Installation](#2-tomcat-installation)
   * [2. Build and Deploy WAR](#2-build-and-deploy-war)
-    + [2. Clone and Build Hello World WAR File](#2-clone-and-build-hello-world-war-file)
-    + [3. Deploy WAR File and Restart Tomcat on Deployment Server](#3-deploy-war-file-and-restart-tomcat-on-deployment-server)
+    + [1. Clone and Build Hello World WAR File](#2-clone-and-build-hello-world-war-file)
+    + [2. Deploy WAR File and Restart Tomcat on Deployment Server](#3-deploy-war-file-and-restart-tomcat-on-deployment-server)
   * [3. Run Ansible Plays in Terraform:](#3-run-ansible-plays-in-terraform)
 - [Jenkins: ](#jenkins)
   * [1. Manual Setup of Pipeline](#1-manual-setup-of-pipeline)
@@ -470,7 +470,7 @@ resource "null_resource" "InitialSetup" {
 }
 ```
 
-### Copy SSH Public Key to Deployment Server
+### 7. Copy SSH Public Key to Deployment Server
 
 In order to allow ansible to connect to the deployment server from the provisioning server, we need to copy the public key from the `S3` bucket to the deployment server.
 
@@ -652,7 +652,7 @@ We use `deploy_war.yml`, and directories `maven_build_role`, and `deploy_war_rol
     - role: deploy_war_role
 ```
 
-### 2. Clone and Build Hello World WAR File
+### 1. Clone and Build Hello World WAR File
 ```
 maven_build_role
 ├── tasks
@@ -678,7 +678,7 @@ maven_build_role
     cmd: mvn package
 ```
 
-### 3. Deploy WAR File and Restart Tomcat on Deployment Server
+### 2. Deploy WAR File and Restart Tomcat on Deployment Server
 
 ```
 deploy_war_role
