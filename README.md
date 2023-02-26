@@ -453,6 +453,9 @@ resource "null_resource" "InitialSetup" {
 We will stop discussing Terraform for now and jump to [ansible](#3-ansible-provisioning).
 
 ## 3. Ansible Provisioning
+
+
+
 ## 4. SSH Keys
 ## 5. Running Ansible Playbooks
 
