@@ -250,7 +250,15 @@ resource "aws_iam_instance_profile" "access-s3-profile" {
 
 ### 1. Provisioning Server
 
-In `main.tf`, the `aws_instance` for the provisioning server takes in the machine image `ami` for ubuntu, belongs to the same VPC and has the same security group applied, the same AWS key, and `aws_iam_instance_profile` that we created earlier in the [IAM section](#4-iam-role). Connection details are standard. Under `user_data`, we perform an `apt update` and install `awscli` to upload and download to the `S3` bucket, `ansible` to provision the deployment server, `git` to clone the necessary repository, `maven` to package the WAR file, and java and `jenkins` as required.
+In `main.tf`, the `aws_instance` for the provisioning server takes in the machine image `ami` for ubuntu, belongs to the same VPC and has the same security group applied, the same AWS key, and `aws_iam_instance_profile` that we created earlier in the [IAM section](#4-iam-role). Connection details are standard. Under `user_data`:
+* We perform an `apt update`
+* Install `awscli` to upload and download to the `S3` bucket
+* Install `ansible` to provision the deployment server
+* Install `git` to clone the necessary repository
+* Install `maven` to package the WAR file and
+* Install java and `jenkins` as required.
+
+To overcome interactive prompts that can halt application of the script when starting the instance, the `-y` option is provided.
 
 ```HCL
 
@@ -290,6 +298,9 @@ sudo systemctl start jenkins.service
 EOF
 }
 ```
+### 2. Deployment Server
+
+
 ### 3. Inventory file in Ansible Provisioning Directory
 ### 4. Zipping Ansible Provisioning Directory
 ### 5. Upload to S3 bucket
