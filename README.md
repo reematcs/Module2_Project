@@ -570,66 +570,66 @@ tomcat_installation_role
 
 1. Files:
 
-As a quick-workaround to configuring gui-manager admin settings (not recommended): 
-  1. We modify and overwrite the built-in `tomcat-users.xml` configuration file as suggested with username: `admin`, password `cu1984`.
-  2. To allow external access to the manager, we need to modify `host-manager.xml` and `manager.xml` and place them under the localhost directory under `conf/Catalina`. You can see this in the next section.
+    As a quick-workaround to configuring gui-manager admin settings (not recommended): 
+      1. We modify and overwrite the built-in `tomcat-users.xml` configuration file as suggested with username: `admin`, password `cu1984`.
+      2. To allow external access to the manager, we need to modify `host-manager.xml` and `manager.xml` and place them under the localhost directory under `conf/Catalina`. You can see this in the next section.
 
-2. Tasks:
+    2. Tasks:
 
-`tomcat_installation_role/tasks/main.yml`
+    `tomcat_installation_role/tasks/main.yml`
 
-```YAML
----
-# tasks file for tomcat_installation_role
-- name: Update apt-get repo and cache
-  apt: update_cache=yes force_apt_get=yes cache_valid_time=3600 
+    ```YAML
+    ---
+    # tasks file for tomcat_installation_role
+    - name: Update apt-get repo and cache
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600 
 
-- name: Install Java
-  apt:
-    name: openjdk-11-jdk
-    state: present
+    - name: Install Java
+      apt:
+        name: openjdk-11-jdk
+        state: present
 
-- name: Download Tomcat
-  get_url:
-    url: "{{ TOMCAT9_URL }}"
-    dest: /tmp/
-    validate_certs: no
+    - name: Download Tomcat
+      get_url:
+        url: "{{ TOMCAT9_URL }}"
+        dest: /tmp/
+        validate_certs: no
 
-- name: Creating Apache Tomcat home directory.
-  command: mkdir /opt/tomcat   
-    
-- name: Extract Tomcat
-  shell: tar -xzvf /tmp/apache-tomcat-*tar.gz -C /opt/tomcat --strip-components=1
+    - name: Creating Apache Tomcat home directory.
+      command: mkdir /opt/tomcat   
+        
+    - name: Extract Tomcat
+      shell: tar -xzvf /tmp/apache-tomcat-*tar.gz -C /opt/tomcat --strip-components=1
 
-- name: overwrite localhost in conf/Catalina
-  copy:
-    src: localhost/
-    dest: /opt/tomcat/conf/Catalina/localhost
+    - name: overwrite localhost in conf/Catalina
+      copy:
+        src: localhost/
+        dest: /opt/tomcat/conf/Catalina/localhost
 
-- name: overwrite tomcat-users.xml in conf
-  copy:
-    src: tomcat-users.xml
-    dest: /opt/tomcat/conf/tomcat-users.xml
+    - name: overwrite tomcat-users.xml in conf
+      copy:
+        src: tomcat-users.xml
+        dest: /opt/tomcat/conf/tomcat-users.xml
 
-- name: Start Tomcat
-  shell: /opt/tomcat/bin/startup.sh
-  ignore_errors: true
+    - name: Start Tomcat
+      shell: /opt/tomcat/bin/startup.sh
+      ignore_errors: true
 
-- name: Wait for Tomcat to start
-  wait_for:
-    host: localhost
-    port: 8080
-    state: started
+    - name: Wait for Tomcat to start
+      wait_for:
+        host: localhost
+        port: 8080
+        state: started
 
-- name: Connect to Tomcat server on port 8080 and check status 200 - Try 5 times
-  tags: test
-  uri:
-    url: http://localhost:8080
-  register: result
-  until: "result.status == 200"
-  retries: 5
-  delay: 10
-```
+    - name: Connect to Tomcat server on port 8080 and check status 200 - Try 5 times
+      tags: test
+      uri:
+        url: http://localhost:8080
+      register: result
+      until: "result.status == 200"
+      retries: 5
+      delay: 10
+    ```
 
 This role is clear, but can be explained further in the link referenced above.
 
