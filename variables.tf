@@ -2,19 +2,19 @@ variable "ami_id" {
     default = "ami-00eeedc4036573771" 
 }
 variable "vpc_id"{
-    default="vpc-0723e281c6bdca95f"
+    default="vpc-08f2abf6a26c882f0"
 }
 variable "aws_terraform_keyname" {
     default = "aws_terraform"
 }
 variable "aws_access_key" {
-    default = "ASIA37M36QKR5U52CFHL"
+    default = "ASIA37M36QKR3ROXEZ33"
 }
 variable "aws_secret_key" {
-default = "wMK8a6ej//coPngpCZmGDoi/rl3NNbmkTMG4rhFD"
+default = "AORTl908IU2hHrJWYDjGaAicshC01XWqXoHv05z/"
 }
 variable "aws_token" {
-  default = "FwoGZXIvYXdzEK///////////wEaDLsTF9RK09PyPc1ikiK3AelyRFZ+xQQ/8uKUV+hA04C2UX38RCdrc+vXdaX65iQEoDuyz/XNLF177HACwq7Cxpl/81wU3G9BOsUBedUGztw4p8lb0Y0YgyhZNKBeJeMqdUoj7h4Xn3bxKjGWdCKg/6rrNAnPJfsLvhXB/O5vsFHpFR4DPqOJkZ48jxgl1+mGvPsJdy3B4xNFPhhlI1Uk28UsBFIrAszyYmkSZeaiGYkFF+zOJl4EL7kQ7B5V5An0pe/KUSxVHiivuu2fBjItBQ1be9xS/NJjVXF1dHPN2eHbW2zn/SrFg2z9q/kYO1ciUkwzBfK6uKAUxjda"
+  default = "FwoGZXIvYXdzELf//////////wEaDB7OS8Jo2Pwsg6vEyiK3AQSh3ZRUN2jwVC1bneiy8A/WIv4PYgZJGUHdAvyDQUmwIui7pxQAMysdmR2eqVHDSxM4J3cQqQGsOq7u89Nihd7DcW9/qaNWAMbOScG18NJLg2LzFZM/kIb0PeJhvOTXCBmxyP0uIxt655gOy6GfDzLT7vTy6W2ugZUb7zLkfhiIUty0CditMts904d6pJ6stj2P1bqqicAmuwEB89dQ0vXwe/+z4p9/ZYX6wWvPrKzJTMtCabcmWSjFqe+fBjItZcsC2ZhqzCGUTTaTg1aiZtkxQQK6leA56c5EWIesMPBjuHw926gimogd11B9"
 }
 variable "region" {
     default = "us-east-2"

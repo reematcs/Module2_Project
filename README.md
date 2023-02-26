@@ -64,6 +64,10 @@ Project
 3. Copy VPC ID from AWS and place in `variables.tf` as the default value for `vpc_id`.
 4. Copy Ubuntu AMI id and place in `variables.tf` as the default value for `ami_id`.
 5. Copy AWS access key, secret key, and token and place in `variables.tf` as the default value for `aws_access_key`, `aws_secret_key`, `aws_token`.
+6. Run terraform commands in the cloned directory:
+  * `terraform init`
+  * `terraform plan`
+  * `terraform apply -auto-approve`
 
 ## Summary of Steps Performed
 
@@ -200,6 +204,8 @@ resource "aws_s3_bucket_acl" "ansible_provision" {
   acl    = "${var.acl_value}"
 }
 ```
+
+
 ### 4. IAM role
 
 In order to facility access from the provisioning and deployment servers to the `S3` bucket, an Identity and Access Management policy and role need to be defined and applied to the server instances. Otherwise, downloading and uploading objects to and from the servers will not work with `awscli`.
@@ -208,7 +214,7 @@ In `main.tf`, a `aws_iam_policy` is defined that can allow for access to all obj
 
 ```HCL
 resource "aws_iam_policy" "access-s3-policy" {
-  name        = "S3accesspolicy"
+  name        = "S3-access-policy"
   description = "Provides permission to access S3"
 
   policy = jsonencode({
@@ -230,7 +236,7 @@ A `aws_iam_role` is created that allows `EC2` instances with this policy attache
 
 ```HCL
 resource "aws_iam_role" "access_bucket_role" {
-  name = "bucket_access_role"
+  name = "access_bucket_role"
 
   assume_role_policy = jsonencode({
   "Version": "2012-10-17",
@@ -263,11 +269,12 @@ The defined `aws_iam_role` is passed through an `aws_iam_instance_profile`.
 
 ```HCL
 resource "aws_iam_instance_profile" "access-s3-profile" {
-  name = "s3-access-profile"
+  name = "access-s3-profile"
   role = aws_iam_role.access_bucket_role.name
 }
 ```
 ## 2. Provisioning and Deployment Server Instances
+
 
 ### 1. Provisioning Server
 
@@ -337,7 +344,7 @@ resource "aws_instance" "ansible_deployment" {
   iam_instance_profile = aws_iam_instance_profile.access-s3-profile.name
 
   tags = {
-    Name = "Ansible_Provisioning_deployment"
+    Name = "Ansible_Provisioning_Deployment"
   }
 
   connection {
@@ -355,6 +362,14 @@ sudo apt install awscli -y
 EOF
 }
 ```
+
+**Creation of AWS Instances:**
+
+![Creation of AWS Instances](screenshots/AWS_Instances.png)
+
+**Creation of AWS resources mentioned**
+
+![Creation of AWS resources mentioned](screenshots/creating_instances.png)
 
 ### 3. Inventory file in Ansible Provisioning Directory
 
@@ -414,6 +429,10 @@ depends_on = [
 }
 ```
 
+**Created S3 bucket on AWS**:
+
+![Created S3 bucket on AWS](screenshots/S3bucket.png)
+
 ### 6. Ansible Provisioning Directory Download to Provisioning Server
 
 To start setting up the provisioning server and download the `ansible.zip` from our `S3` bucket, we will need to use a `null_resource` which connects to the aws instance `ansible_provisioning_server` that has just been created. 
@@ -441,7 +460,6 @@ unzip ansible.zip
 This will unzip the file that was just downloaded.
 
 ```HCL
-
 resource "null_resource" "InitialSetup" {
  
   connection {
@@ -471,13 +489,25 @@ resource "null_resource" "InitialSetup" {
 }
 ```
 
+**Terraform execution of `null_resource.Initial_Setup - ssh connection and generation of rsa key pair:**
+
+![Terraform execution of `null_resource.Initial_Setup - ssh connection and generation of rsa key pair`](screenshots/null_resources.InitialSetup.png)
+
+**Terraform execution of `null_resource.Initial_Setup - upload public key, download zip and perform unzip:**
+
+![Terraform execution of `null_resource.Initial_Setup - upload public key, download zip and perform unzip](screenshots/null_resource.InitialSetup_3.png)
+
+**Ansible provisioning server contents after performing unzip:**
+
+![Ansible provisioning server contents after performing unzip](screenshots/provisioning_server.png)
+
+
 ### 7. Copy SSH Public Key to Deployment Server
 
 In order to allow ansible to connect to the deployment server from the provisioning server, we need to copy the public key from the `S3` bucket to the deployment server.
 
 
 ```HCL
-
 resource "null_resource" "CopyPubTodeployment" {
  
   connection {
@@ -501,6 +531,10 @@ resource "null_resource" "CopyPubTodeployment" {
   ]
 }
 ```
+
+**Terraform execution of null_resource.CopyPubTodeployment - ssh connection and download of public key:**
+
+![Terraform execution of null_resource.CopyPubTodeployment - ssh connection and download of public key](screenshots/null_resource.CopyPubToDeployment.png)
 
 Above, we use a `null resource` to connect to the deployment server, check that `awscli` is installed, then copy the public key into authorize_keys.
 
@@ -752,10 +786,18 @@ resource "null_resource" "FinalSetup" {
 }
 ```
 
-```
-null_resource.FinalSetup (remote-exec): URL: http://18.219.223.198:8080/sparkjava-hello-world-1.0/hello
-null_resource.FinalSetup (remote-exec): 7275a2536a9f4059a8f0a840734701cf
-```
+**Terraform execution of null_resource.FinalSetup - running ansible playbooks and printing deployment server URL Hello World webapp:**
+
+![Terraform execution of null_resource.FinalSetup - running ansible playbooks](screenshots/null_resource.FinalSetup.png)
+
+**Contents of Tomcat deployment server `/opt/tomcat` directory:**
+
+![Contents of Tomcat deployment server /opt/tomcat directory](screenshots/DeploymentServer_Tomcat.png)
+
+**Terraform execution of null_resource.FinalSetup - printing deployment server URL Hello World webapp:***
+
+![Terraform execution of null_resource.FinalSetup - printing deployment server URL Hello World webapp](screenshots/null_resource.FinalSetup_4.png)
+
 
 # Jenkins
 ## 1. Manual Setup of Pipeline

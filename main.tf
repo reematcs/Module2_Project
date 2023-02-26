@@ -47,7 +47,7 @@ resource "aws_security_group" "server_sec_group" {
 
 #Create an IAM Policy
 resource "aws_iam_policy" "access-s3-policy" {
-  name        = "S3accesspolicy"
+  name        = "access-s3-policy"
   description = "Provides permission to access S3"
 
   policy = jsonencode({
@@ -145,7 +145,7 @@ resource "aws_instance" "ansible_deployment" {
   iam_instance_profile = aws_iam_instance_profile.access-s3-profile.name
 
   tags = {
-    Name = "Ansible_Provisioning_deployment"
+    Name = "Ansible_Provisioning_Deployment"
   }
 
   connection {
@@ -279,8 +279,8 @@ resource "null_resource" "FinalSetup" {
       "#!/bin/bash",
       "ansible-playbook -i ./inventory tomcat_playbook.yml",
       "ansible-playbook -i inventory deploy_war.yml",
-      "echo \"URL: http://${aws_instance.ansible_deployment.public_ip}:8080/sparkjava-hello-world-1.0/hello\"",
-      "sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
+      "echo \"Hello World URL: http://${aws_instance.ansible_deployment.public_ip}:8080/sparkjava-hello-world-1.0/hello\"",
+      "echo \"Jenkins Initial Password: `sudo cat /var/lib/jenkins/secrets/initialAdminPassword`\""
     ]
   }
   depends_on = [
