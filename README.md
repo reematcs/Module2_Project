@@ -11,35 +11,16 @@ Terraform, an open-source IaC is used to spin up a EC2 server instance, a deploy
 ```
 Module2_Project
 ├── README.md
-├── ansible_provisioning
-│   ├── deploy_war.yml
-│   ├── deploy_war_role
-│   │   ├── tasks
-│   │   │   └── main.yml
-│   │   └── tests
-│   │       ├── inventory
-│   │       └── test.yml
-│   ├── localhost
-│   │   ├── host-manager.xml
-│   │   └── manager.xml
-│   ├── maven_build_role
-│   │   ├── tasks
-│   │   │   └── main.yml
-│   │   └── tests
-│   │       ├── inventory
-│   │       └── test.yml
-│   ├── tomcat-users.xml
-│   └── tomcat_playbook.yml
-├── aws_terraform.pem
-├── bucket.tf
 ├── main.tf
-├── outputs.tf
+├── aws_terraform.pem
+├── variables.tf
+├── bucket.tf
+├── ansible_provisioning
+│   ├── ...
 ├── providers.tf
-├── terraform.tfstate
-├── terraform.tfstate.backup
-└── variables.tf
+└── outputs.tf
 
-9 directories, 22 files
+13 directories, 22 files
 ```
 
 ## Summary of Steps Performed:
@@ -501,31 +482,11 @@ ansible_provisioning
 ├── deploy_war.yml
 ├── inventory
 ├── tomcat_installation_role
-│   ├── README.md
-│   ├── files
-│   │   ├── tomcat-users.xml
-│   │   └── localhost
-│   │       ├── host-manager.xml
-│   │       └── manager.xml
-│   ├── tests
-│   │   ├── test.yml
-│   │   └── inventory
-│   └── tasks
-│       └── main.yml
+│   ├── ...
 ├── deploy_war_role
-│   ├── README.md
-│   ├── tests
-│   │   ├── test.yml
-│   │   └── inventory
-│   └── tasks
-│       └── main.yml
+│   ├── ...
 └── maven_build_role
-    ├── README.md
-    ├── tests
-    │   ├── test.yml
-    │   └── inventory
-    └── tasks
-        └── main.yml
+    ├── ...
 ```
 
 The two YAML files `tomcat_playbook.yml` and `deploy_war.yml` perform Tomcat installation and WAR deployment on the deployment server from the ansible provisioning server. They use the `inventory` file with our host groups and the roles defined the the `*_role` directories.
@@ -563,8 +524,6 @@ tomcat_installation_role
 └── tests
     ├── inventory
     └── test.yml
-
-5 directories, 6 files
 ```
 
 1. Files:
@@ -634,7 +593,7 @@ This role is clear, but can be explained further in the link referenced above.
 
 
 
-## 2. Deployment
+## 2. Build and Deploy WAR
 
 We use `deploy_war.yml`, and directories `maven_build_role`, and `deploy_war_role`
 
@@ -653,6 +612,16 @@ We use `deploy_war.yml`, and directories `maven_build_role`, and `deploy_war_rol
 ```
 
 ### 2. Clone and Build Hello World WAR File
+```
+maven_build_role
+├── tasks
+│   └── main.yml
+└── tests
+    ├── inventory
+    └── test.yml
+```
+
+`maven_build_role\tasks\main.yml`
 
 ```YAML
 ---
@@ -669,6 +638,16 @@ We use `deploy_war.yml`, and directories `maven_build_role`, and `deploy_war_rol
 ```
 
 ### 3. Deploy WAR File and Restart Tomcat on Deployment Server
+
+```
+deploy_war_role
+├── tasks
+│   └── main.yml
+└── tests
+    ├── inventory
+    └── test.yml
+```
+`deploy_war_role\tasks\main.yml`
 
 ```YAML
 ---
@@ -728,6 +707,11 @@ resource "null_resource" "FinalSetup" {
     null_resource.CopyPubTodeployment
   ]
 }
+```
+
+```
+null_resource.FinalSetup (remote-exec): URL: http://18.219.223.198:8080/sparkjava-hello-world-1.0/hello
+null_resource.FinalSetup (remote-exec): 7275a2536a9f4059a8f0a840734701cf
 ```
 
 # Jenkins: 
