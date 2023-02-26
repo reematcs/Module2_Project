@@ -10,8 +10,8 @@ Using Terraform and Ansible to provision, Jenkins to Automate Maven packing of W
   * [Overview](#overview)
   * [Directory Structure](#directory-structure)
   * [Usage](#usage)
-  * [Summary of Steps Performed:](#summary-of-steps-performed)
-- [Terraform:](#terraform)
+  * [Summary of Steps Performed](#summary-of-steps-performed)
+- [Terraform](#terraform)
   * [1. Setup](#1-setup)
     + [1. Basic Setup](#1-basic-setup)
     + [2. Security Groups](#2-security-groups)
@@ -25,14 +25,14 @@ Using Terraform and Ansible to provision, Jenkins to Automate Maven packing of W
     + [5. Upload to S3 bucket](#5-upload-to-s3-bucket)
     + [6. Ansible Provisioning Directory Download to Provisioning Server](#6-ansible-provisioning-directory-download-to-provisioning-server)
     + [7. Copy SSH Public Key to Deployment Server](#copy-ssh-public-key-to-deployment-server)
-- [Ansible:](#ansible)
+- [Ansible](#ansible)
   * [1. Tomcat Setup on Deployment Server](#1-tomcat-setup-on-deployment-server)
       - [1. `tomcat_playbook.yml`](#1-tomcat_playbookyml)
       - [2. Tomcat Installation](#2-tomcat-installation)
   * [2. Build and Deploy WAR](#2-build-and-deploy-war)
     + [1. Clone and Build Hello World WAR File](#2-clone-and-build-hello-world-war-file)
     + [2. Deploy WAR File and Restart Tomcat on Deployment Server](#3-deploy-war-file-and-restart-tomcat-on-deployment-server)
-  * [3. Run Ansible Plays in Terraform:](#3-run-ansible-plays-in-terraform)
+  * [3. Run Ansible Plays in Terraform](#3-run-ansible-plays-in-terraform)
 - [Jenkins: ](#jenkins)
   * [1. Manual Setup of Pipeline](#1-manual-setup-of-pipeline)
   * [2. Testing and Validating Pipeline](#2-testing-and-validating-pipeline)
@@ -67,18 +67,18 @@ Project
 
 ## Summary of Steps Performed
 
-1. [Terraform:](#terraform)
+1. [Terraform](#terraform)
     1. Spun up `S3` bucket
     2. Spun up 2 `EC2` instances, provisioning server and deployment, and generated their public and private ips. Attached necessary IAM role to `EC2` instances to access `S3` bucket.
     3. Placed Ansible provisioning playbooks and roles, with inventory file for deployment ip address. Zipped using Terraform and uploaded to `S3` bucket.
     4. Downloaded ansible playbook using `awscli` commands from `S3` bucket to `EC2` provisioning server. Unzipped. Generated ssh keys to connect with deployment server and uploaded to `S3` bucket.
     5. Downloaded ssh public key from `S3` bucket using `awscli` commands to deployment instance and appended to ssh authorized keys.
     6. Used Terraform to run ansible playbooks.
-2. [Ansible:](#ansible)
+2. [Ansible](#ansible)
     1. Tomcat setup on deployment server.
     2. Clone and build "Hello World" WAR file using `maven` on provisioning server.
     3. Deploy WAR file and restart Tomcat on deployment server.
-3. [Jenkins:](#jenkins)
+3. [Jenkins](#jenkins)
     1. Manual setup of pipeline in [previous step](#ansible)
     2. Testing and validating pipeline.
 
