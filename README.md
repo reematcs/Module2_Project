@@ -574,7 +574,7 @@ tomcat_installation_role
       1. We modify and overwrite the built-in `tomcat-users.xml` configuration file as suggested with username: `admin`, password `cu1984`.
       2. To allow external access to the manager, we need to modify `host-manager.xml` and `manager.xml` and place them under the localhost directory under `conf/Catalina`. You can see this in the next section.
 
-    2. Tasks:
+  2. Tasks:
 
     `tomcat_installation_role/tasks/main.yml`
 
