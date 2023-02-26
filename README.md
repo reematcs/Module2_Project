@@ -33,9 +33,9 @@ Using Terraform and Ansible to provision, Jenkins to Automate Maven packing of W
     + [1. Clone and Build Hello World WAR File](#2-clone-and-build-hello-world-war-file)
     + [2. Deploy WAR File and Restart Tomcat on Deployment Server](#3-deploy-war-file-and-restart-tomcat-on-deployment-server)
   * [3. Run Ansible Plays in Terraform](#3-run-ansible-plays-in-terraform)
-- [Jenkins: ](#jenkins)
+<!-- - [Jenkins: ](#jenkins)
   * [1. Manual Setup of Pipeline](#1-manual-setup-of-pipeline)
-  * [2. Testing and Validating Pipeline](#2-testing-and-validating-pipeline)
+  * [2. Testing and Validating Pipeline](#2-testing-and-validating-pipeline) -->
 <!-- TOC end -->
 <!-- TOC -->
 # Description
@@ -798,8 +798,8 @@ resource "null_resource" "FinalSetup" {
 
 ![Terraform execution of null_resource.FinalSetup - printing deployment server URL Hello World webapp](screenshots/null_resource.FinalSetup_4.png)
 
-
+<!-- 
 # Jenkins
 ## 1. Manual Setup of Pipeline
-## 2. Testing and Validating Pipeline
+## 2. Testing and Validating Pipeline -->
 
