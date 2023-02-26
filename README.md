@@ -22,6 +22,12 @@ Module2_Project
 
 13 directories, 22 files
 ```
+## Usage
+
+1. Create a key pair in AWS, download and replace `aws_terraform.pem`.
+3. Copy VPC ID from AWS and place in `variables.tf` as the default value for `vpc_id`.
+4. Copy Ubuntu AMI id and place in `variables.tf` as the default value for `ami_id`.
+5. Copy AWS access key, secret key, and token and place in `variables.tf` as the default value for `aws_access_key`, `aws_secret_key`, `aws_token`.
 
 ## Summary of Steps Performed:
 

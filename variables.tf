@@ -17,7 +17,7 @@ variable "aws_token" {
   default = "FwoGZXIvYXdzEK///////////wEaDLsTF9RK09PyPc1ikiK3AelyRFZ+xQQ/8uKUV+hA04C2UX38RCdrc+vXdaX65iQEoDuyz/XNLF177HACwq7Cxpl/81wU3G9BOsUBedUGztw4p8lb0Y0YgyhZNKBeJeMqdUoj7h4Xn3bxKjGWdCKg/6rrNAnPJfsLvhXB/O5vsFHpFR4DPqOJkZ48jxgl1+mGvPsJdy3B4xNFPhhlI1Uk28UsBFIrAszyYmkSZeaiGYkFF+zOJl4EL7kQ7B5V5An0pe/KUSxVHiivuu2fBjItBQ1be9xS/NJjVXF1dHPN2eHbW2zn/SrFg2z9q/kYO1ciUkwzBfK6uKAUxjda"
 }
 variable "region" {
-    default = "region"
+    default = "us-east-2"
 }
 
 variable "bucket_name" {
