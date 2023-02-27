@@ -125,7 +125,7 @@ variable "aws_token" {
   default = "..."
 }
 variable "region" {
-    default = "region"
+    default = "us-east-2"
 }
 ```
 Inside `main.tf`, we use the variables we specified earlier to 
