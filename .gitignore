@@ -34,5 +34,6 @@ override.tf.json
 terraform.rc
 
 **/.discards/*
+.discards
 **/.DS_Store
 .DS_Store
