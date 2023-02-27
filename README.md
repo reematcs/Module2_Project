@@ -1,3 +1,7 @@
+# Author
+Reem Mokhtar
+[reem.mokhtar](https://www.linkedin.com/in/reematcs/)
+
 # Name
 
 Using Terraform and Ansible to provision, Jenkins to Automate Maven packing of WAR file and deployment to Tomcat 9
