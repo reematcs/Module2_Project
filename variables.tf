@@ -7,15 +7,16 @@ variable "vpc_id"{
 variable "aws_terraform_keyname" {
     default = "aws_terraform"
 }
-variable "aws_access_key" {
-    default = "ASIA37M36QKR3ROXEZ33"
-}
-variable "aws_secret_key" {
-default = "AORTl908IU2hHrJWYDjGaAicshC01XWqXoHv05z/"
-}
-variable "aws_token" {
-  default = "FwoGZXIvYXdzELf//////////wEaDB7OS8Jo2Pwsg6vEyiK3AQSh3ZRUN2jwVC1bneiy8A/WIv4PYgZJGUHdAvyDQUmwIui7pxQAMysdmR2eqVHDSxM4J3cQqQGsOq7u89Nihd7DcW9/qaNWAMbOScG18NJLg2LzFZM/kIb0PeJhvOTXCBmxyP0uIxt655gOy6GfDzLT7vTy6W2ugZUb7zLkfhiIUty0CditMts904d6pJ6stj2P1bqqicAmuwEB89dQ0vXwe/+z4p9/ZYX6wWvPrKzJTMtCabcmWSjFqe+fBjItZcsC2ZhqzCGUTTaTg1aiZtkxQQK6leA56c5EWIesMPBjuHw926gimogd11B9"
-}
+
+# variable "aws_access_key" {
+#     default = ""
+# }
+# variable "aws_secret_key" {
+# default = "AORTl908IU2hHrJWYDjGaAicshC01XWqXoHv05z/"
+# }
+# variable "aws_token" {
+#   default = "FwoGZXIvYXdzELf//////////wEaDB7OS8Jo2Pwsg6vEyiK3AQSh3ZRUN2jwVC1bneiy8A/WIv4PYgZJGUHdAvyDQUmwIui7pxQAMysdmR2eqVHDSxM4J3cQqQGsOq7u89Nihd7DcW9/qaNWAMbOScG18NJLg2LzFZM/kIb0PeJhvOTXCBmxyP0uIxt655gOy6GfDzLT7vTy6W2ugZUb7zLkfhiIUty0CditMts904d6pJ6stj2P1bqqicAmuwEB89dQ0vXwe/+z4p9/ZYX6wWvPrKzJTMtCabcmWSjFqe+fBjItZcsC2ZhqzCGUTTaTg1aiZtkxQQK6leA56c5EWIesMPBjuHw926gimogd11B9"
+# }
 variable "region" {
     default = "us-east-2"
 }

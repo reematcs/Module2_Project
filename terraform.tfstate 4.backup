@@ -1,0 +1,123 @@
+{
+  "version": 4,
+  "terraform_version": "1.3.9",
+  "serial": 134,
+  "lineage": "e1119cfd-86a5-8f38-bff8-6ee6817241cf",
+  "outputs": {},
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "aws_iam_instance_profile",
+      "name": "access-s3-profile",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::823350166179:instance-profile/access-s3-profile",
+            "create_date": "2023-02-26T22:00:25Z",
+            "id": "access-s3-profile",
+            "name": "access-s3-profile",
+            "name_prefix": null,
+            "path": "/",
+            "role": "access_bucket_role",
+            "tags": {},
+            "tags_all": {},
+            "unique_id": "AIPA37M36QKR3NZ3RFUST"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_role.access_bucket_role"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "access-s3-policy",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::823350166179:policy/S3-access-policy",
+            "description": "Provides permission to access S3",
+            "id": "arn:aws:iam::823350166179:policy/S3-access-policy",
+            "name": "S3-access-policy",
+            "name_prefix": null,
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"s3:*\",\"s3-object-lambda:*\"],\"Effect\":\"Allow\",\"Resource\":\"*\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPA37M36QKR3UMLTG3ZQ",
+            "tags": {},
+            "tags_all": {}
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_policy_attachment",
+      "name": "bucket-role-attach",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "groups": [],
+            "id": "role-attachment",
+            "name": "role-attachment",
+            "policy_arn": "arn:aws:iam::823350166179:policy/S3-access-policy",
+            "roles": [
+              "access_bucket_role"
+            ],
+            "users": []
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_policy.access-s3-policy",
+            "aws_iam_role.access_bucket_role"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "access_bucket_role",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::823350166179:role/access_bucket_role",
+            "assume_role_policy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"ec2.amazonaws.com\"]},\"Sid\":\"\"}],\"Version\":\"2012-10-17\"}",
+            "create_date": "2023-02-26T22:00:24Z",
+            "description": "",
+            "force_detach_policies": false,
+            "id": "access_bucket_role",
+            "inline_policy": [],
+            "managed_policy_arns": [
+              "arn:aws:iam::823350166179:policy/S3-access-policy"
+            ],
+            "max_session_duration": 3600,
+            "name": "access_bucket_role",
+            "name_prefix": "",
+            "path": "/",
+            "permissions_boundary": null,
+            "tags": {},
+            "tags_all": {},
+            "unique_id": "AROA37M36QKRSFTM7APZP"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}

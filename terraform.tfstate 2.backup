@@ -1,0 +1,828 @@
+{
+  "version": 4,
+  "terraform_version": "1.3.7",
+  "serial": 219,
+  "lineage": "8fb5d384-7c0f-a6d1-7f6a-b6adc9621f33",
+  "outputs": {
+    "ip_server": {
+      "value": "172.31.56.12",
+      "type": "string"
+    },
+    "ip_worker": {
+      "value": "172.31.62.253",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "data",
+      "type": "archive_file",
+      "name": "data_backup",
+      "provider": "provider[\"registry.terraform.io/hashicorp/archive\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "excludes": null,
+            "id": "3b2c799b633c4e74bf0630a3872a7c2797697248",
+            "output_base64sha256": "ukN/fAo27zSpJ54TjahbinYAsoA+CWdyn4cgG9kyjOA=",
+            "output_file_mode": null,
+            "output_md5": "3f4834d72caaf723c5abcfbeb222a7d7",
+            "output_path": "ansible.zip",
+            "output_sha": "3b2c799b633c4e74bf0630a3872a7c2797697248",
+            "output_size": 7780,
+            "source": [],
+            "source_content": null,
+            "source_content_filename": null,
+            "source_dir": "./ansible_provisioning",
+            "source_file": null,
+            "type": "zip"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_instance_profile",
+      "name": "access-s3-profile",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::823350166179:instance-profile/access-s3-profile",
+            "create_date": "2023-02-24T23:31:40Z",
+            "id": "access-s3-profile",
+            "name": "access-s3-profile",
+            "name_prefix": null,
+            "path": "/",
+            "role": "access_bucket_role",
+            "tags": {},
+            "tags_all": {},
+            "unique_id": "AIPA37M36QKR5NXBCTBBM"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_role.access_bucket_role"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "access-s3-policy",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::823350166179:policy/S3-Access-Policy",
+            "description": "Provides permission to access S3",
+            "id": "arn:aws:iam::823350166179:policy/S3-Access-Policy",
+            "name": "S3-Access-Policy",
+            "name_prefix": null,
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"s3:*\",\"s3-object-lambda:*\"],\"Effect\":\"Allow\",\"Resource\":\"*\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPA37M36QKRYVI3ORBQF",
+            "tags": {},
+            "tags_all": {}
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_policy_attachment",
+      "name": "bucket-role-attach",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "groups": [],
+            "id": "role-attachment",
+            "name": "role-attachment",
+            "policy_arn": "arn:aws:iam::823350166179:policy/S3-Access-Policy",
+            "roles": [
+              "access_bucket_role"
+            ],
+            "users": []
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_policy.access-s3-policy",
+            "aws_iam_role.access_bucket_role"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "access_bucket_role",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::823350166179:role/access_bucket_role",
+            "assume_role_policy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"ec2.amazonaws.com\"]},\"Sid\":\"\"}],\"Version\":\"2012-10-17\"}",
+            "create_date": "2023-02-24T23:31:39Z",
+            "description": "",
+            "force_detach_policies": false,
+            "id": "access_bucket_role",
+            "inline_policy": [],
+            "managed_policy_arns": [
+              "arn:aws:iam::823350166179:policy/S3-Access-Policy"
+            ],
+            "max_session_duration": 3600,
+            "name": "access_bucket_role",
+            "name_prefix": "",
+            "path": "/",
+            "permissions_boundary": null,
+            "tags": {
+              "tag-key": "tag-value"
+            },
+            "tags_all": {
+              "tag-key": "tag-value"
+            },
+            "unique_id": "AROA37M36QKRTIH2RP27P"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_instance",
+      "name": "ansible_provisioning_server",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "ami": "ami-0557a15b87f6559cf",
+            "arn": "arn:aws:ec2:us-east-1:823350166179:instance/i-0994f430b37eea508",
+            "associate_public_ip_address": true,
+            "availability_zone": "us-east-1e",
+            "capacity_reservation_specification": [
+              {
+                "capacity_reservation_preference": "open",
+                "capacity_reservation_target": []
+              }
+            ],
+            "cpu_core_count": 1,
+            "cpu_threads_per_core": 1,
+            "credit_specification": [
+              {
+                "cpu_credits": "standard"
+              }
+            ],
+            "disable_api_stop": false,
+            "disable_api_termination": false,
+            "ebs_block_device": [],
+            "ebs_optimized": false,
+            "enclave_options": [
+              {
+                "enabled": false
+              }
+            ],
+            "ephemeral_block_device": [],
+            "get_password_data": false,
+            "hibernation": false,
+            "host_id": "",
+            "host_resource_group_arn": null,
+            "iam_instance_profile": "access-s3-profile",
+            "id": "i-0994f430b37eea508",
+            "instance_initiated_shutdown_behavior": "stop",
+            "instance_state": "running",
+            "instance_type": "t2.micro",
+            "ipv6_address_count": 0,
+            "ipv6_addresses": [],
+            "key_name": "aws_terraform",
+            "launch_template": [],
+            "maintenance_options": [
+              {
+                "auto_recovery": "default"
+              }
+            ],
+            "metadata_options": [
+              {
+                "http_endpoint": "enabled",
+                "http_put_response_hop_limit": 1,
+                "http_tokens": "optional",
+                "instance_metadata_tags": "disabled"
+              }
+            ],
+            "monitoring": false,
+            "network_interface": [],
+            "outpost_arn": "",
+            "password_data": "",
+            "placement_group": "",
+            "placement_partition_number": 0,
+            "primary_network_interface_id": "eni-0b083844e84218824",
+            "private_dns": "ip-172-31-56-12.ec2.internal",
+            "private_dns_name_options": [
+              {
+                "enable_resource_name_dns_a_record": false,
+                "enable_resource_name_dns_aaaa_record": false,
+                "hostname_type": "ip-name"
+              }
+            ],
+            "private_ip": "172.31.56.12",
+            "public_dns": "ec2-52-201-173-48.compute-1.amazonaws.com",
+            "public_ip": "52.201.173.48",
+            "root_block_device": [
+              {
+                "delete_on_termination": true,
+                "device_name": "/dev/sda1",
+                "encrypted": true,
+                "iops": 100,
+                "kms_key_id": "arn:aws:kms:us-east-1:823350166179:key/2d3655d8-1658-482c-b0be-f8befbac1af0",
+                "tags": {},
+                "throughput": 0,
+                "volume_id": "vol-083fb94526ce038f6",
+                "volume_size": 8,
+                "volume_type": "gp2"
+              }
+            ],
+            "secondary_private_ips": [],
+            "security_groups": [
+              "server_sec_group"
+            ],
+            "source_dest_check": true,
+            "subnet_id": "subnet-01789f3404a4dd13d",
+            "tags": {
+              "Name": "Ansible_Provisioning_Server"
+            },
+            "tags_all": {
+              "Name": "Ansible_Provisioning_Server"
+            },
+            "tenancy": "default",
+            "timeouts": null,
+            "user_data": "bc81b2b3414ec06e8420cdc74d2e827614f3f515",
+            "user_data_base64": null,
+            "user_data_replace_on_change": false,
+            "volume_tags": null,
+            "vpc_security_group_ids": [
+              "sg-03a1cf6e1096f7dd7"
+            ]
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6MTIwMDAwMDAwMDAwMCwidXBkYXRlIjo2MDAwMDAwMDAwMDB9LCJzY2hlbWFfdmVyc2lvbiI6IjEifQ==",
+          "dependencies": [
+            "aws_iam_instance_profile.access-s3-profile",
+            "aws_security_group.server_sec_group"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_instance",
+      "name": "ansible_worker",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "ami": "ami-0557a15b87f6559cf",
+            "arn": "arn:aws:ec2:us-east-1:823350166179:instance/i-05ec0636e0e06f999",
+            "associate_public_ip_address": true,
+            "availability_zone": "us-east-1e",
+            "capacity_reservation_specification": [
+              {
+                "capacity_reservation_preference": "open",
+                "capacity_reservation_target": []
+              }
+            ],
+            "cpu_core_count": 1,
+            "cpu_threads_per_core": 1,
+            "credit_specification": [
+              {
+                "cpu_credits": "standard"
+              }
+            ],
+            "disable_api_stop": false,
+            "disable_api_termination": false,
+            "ebs_block_device": [],
+            "ebs_optimized": false,
+            "enclave_options": [
+              {
+                "enabled": false
+              }
+            ],
+            "ephemeral_block_device": [],
+            "get_password_data": false,
+            "hibernation": false,
+            "host_id": "",
+            "host_resource_group_arn": null,
+            "iam_instance_profile": "access-s3-profile",
+            "id": "i-05ec0636e0e06f999",
+            "instance_initiated_shutdown_behavior": "stop",
+            "instance_state": "running",
+            "instance_type": "t2.micro",
+            "ipv6_address_count": 0,
+            "ipv6_addresses": [],
+            "key_name": "aws_terraform",
+            "launch_template": [],
+            "maintenance_options": [
+              {
+                "auto_recovery": "default"
+              }
+            ],
+            "metadata_options": [
+              {
+                "http_endpoint": "enabled",
+                "http_put_response_hop_limit": 1,
+                "http_tokens": "optional",
+                "instance_metadata_tags": "disabled"
+              }
+            ],
+            "monitoring": false,
+            "network_interface": [],
+            "outpost_arn": "",
+            "password_data": "",
+            "placement_group": "",
+            "placement_partition_number": 0,
+            "primary_network_interface_id": "eni-05d885a166fcbab1a",
+            "private_dns": "ip-172-31-62-253.ec2.internal",
+            "private_dns_name_options": [
+              {
+                "enable_resource_name_dns_a_record": false,
+                "enable_resource_name_dns_aaaa_record": false,
+                "hostname_type": "ip-name"
+              }
+            ],
+            "private_ip": "172.31.62.253",
+            "public_dns": "ec2-18-234-107-70.compute-1.amazonaws.com",
+            "public_ip": "18.234.107.70",
+            "root_block_device": [
+              {
+                "delete_on_termination": true,
+                "device_name": "/dev/sda1",
+                "encrypted": true,
+                "iops": 100,
+                "kms_key_id": "arn:aws:kms:us-east-1:823350166179:key/2d3655d8-1658-482c-b0be-f8befbac1af0",
+                "tags": {},
+                "throughput": 0,
+                "volume_id": "vol-0e10ae72d810a31fe",
+                "volume_size": 8,
+                "volume_type": "gp2"
+              }
+            ],
+            "secondary_private_ips": [],
+            "security_groups": [
+              "worker_sec_group"
+            ],
+            "source_dest_check": true,
+            "subnet_id": "subnet-01789f3404a4dd13d",
+            "tags": {
+              "Name": "Ansible_Provisioning_Worker"
+            },
+            "tags_all": {
+              "Name": "Ansible_Provisioning_Worker"
+            },
+            "tenancy": "default",
+            "timeouts": null,
+            "user_data": "56e04e1d7269aadf2ff07e21556dd4814a7b55b1",
+            "user_data_base64": null,
+            "user_data_replace_on_change": false,
+            "volume_tags": null,
+            "vpc_security_group_ids": [
+              "sg-038ae8bb6bdf77cc4"
+            ]
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6MTIwMDAwMDAwMDAwMCwidXBkYXRlIjo2MDAwMDAwMDAwMDB9LCJzY2hlbWFfdmVyc2lvbiI6IjEifQ==",
+          "dependencies": [
+            "aws_iam_instance_profile.access-s3-profile",
+            "aws_security_group.worker_sec_group"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "b1",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "acceleration_status": "",
+            "acl": null,
+            "arn": "arn:aws:s3:::projectmodule2-reem-ansibledir",
+            "bucket": "projectmodule2-reem-ansibledir",
+            "bucket_domain_name": "projectmodule2-reem-ansibledir.s3.amazonaws.com",
+            "bucket_prefix": null,
+            "bucket_regional_domain_name": "projectmodule2-reem-ansibledir.s3.amazonaws.com",
+            "cors_rule": [],
+            "force_destroy": true,
+            "grant": [
+              {
+                "id": "0326eb27ee658cb8705b593196343e38eba015099b8cd72faa403a43d3e7009b",
+                "permissions": [
+                  "FULL_CONTROL"
+                ],
+                "type": "CanonicalUser",
+                "uri": ""
+              }
+            ],
+            "hosted_zone_id": "Z3AQBSTGFYJSTF",
+            "id": "projectmodule2-reem-ansibledir",
+            "lifecycle_rule": [],
+            "logging": [],
+            "object_lock_configuration": [],
+            "object_lock_enabled": false,
+            "policy": "",
+            "region": "us-east-1",
+            "replication_configuration": [],
+            "request_payer": "BucketOwner",
+            "server_side_encryption_configuration": [
+              {
+                "rule": [
+                  {
+                    "apply_server_side_encryption_by_default": [
+                      {
+                        "kms_master_key_id": "",
+                        "sse_algorithm": "AES256"
+                      }
+                    ],
+                    "bucket_key_enabled": false
+                  }
+                ]
+              }
+            ],
+            "tags": {
+              "Environment": "Dev",
+              "Name": "projectmodule2-reem-ansibledir"
+            },
+            "tags_all": {
+              "Environment": "Dev",
+              "Name": "projectmodule2-reem-ansibledir"
+            },
+            "timeouts": null,
+            "versioning": [
+              {
+                "enabled": false,
+                "mfa_delete": false
+              }
+            ],
+            "website": [],
+            "website_domain": null,
+            "website_endpoint": null
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjM2MDAwMDAwMDAwMDAsInJlYWQiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH19"
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket_acl",
+      "name": "ansible_provision",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "access_control_policy": [
+              {
+                "grant": [
+                  {
+                    "grantee": [
+                      {
+                        "display_name": "claaslabs+5f06bade2d11de5048e47435",
+                        "email_address": "",
+                        "id": "0326eb27ee658cb8705b593196343e38eba015099b8cd72faa403a43d3e7009b",
+                        "type": "CanonicalUser",
+                        "uri": ""
+                      }
+                    ],
+                    "permission": "FULL_CONTROL"
+                  }
+                ],
+                "owner": [
+                  {
+                    "display_name": "claaslabs+5f06bade2d11de5048e47435",
+                    "id": "0326eb27ee658cb8705b593196343e38eba015099b8cd72faa403a43d3e7009b"
+                  }
+                ]
+              }
+            ],
+            "acl": "private",
+            "bucket": "projectmodule2-reem-ansibledir",
+            "expected_bucket_owner": "",
+            "id": "projectmodule2-reem-ansibledir,private"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_s3_bucket.b1"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket_policy",
+      "name": "public_read_access",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "bucket": "projectmodule2-reem-ansibledir",
+            "id": "projectmodule2-reem-ansibledir",
+            "policy": "{\"Statement\":[{\"Action\":[\"s3:*\"],\"Effect\":\"Allow\",\"Principal\":\"*\",\"Resource\":[\"arn:aws:s3:::projectmodule2-reem-ansibledir\",\"arn:aws:s3:::projectmodule2-reem-ansibledir/*\"]}],\"Version\":\"2012-10-17\"}"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_s3_bucket.b1"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_object",
+      "name": "upload_ansible",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "acl": "private",
+            "bucket": "projectmodule2-reem-ansibledir",
+            "bucket_key_enabled": false,
+            "cache_control": "",
+            "content": null,
+            "content_base64": null,
+            "content_disposition": "",
+            "content_encoding": "",
+            "content_language": "",
+            "content_type": "binary/octet-stream",
+            "etag": "3f4834d72caaf723c5abcfbeb222a7d7",
+            "force_destroy": false,
+            "id": "ansible.zip",
+            "key": "ansible.zip",
+            "kms_key_id": null,
+            "metadata": null,
+            "object_lock_legal_hold_status": "",
+            "object_lock_mode": "",
+            "object_lock_retain_until_date": "",
+            "server_side_encryption": "AES256",
+            "source": "ansible.zip",
+            "source_hash": null,
+            "storage_class": "STANDARD",
+            "tags": null,
+            "tags_all": {},
+            "version_id": "",
+            "website_redirect": ""
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_instance_profile.access-s3-profile",
+            "aws_instance.ansible_worker",
+            "aws_s3_bucket.b1",
+            "aws_security_group.worker_sec_group",
+            "data.archive_file.data_backup",
+            "local_file.tf_ansible_inventory"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "server_sec_group",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:us-east-1:823350166179:security-group/sg-03a1cf6e1096f7dd7",
+            "description": "Managed by Terraform",
+            "egress": [
+              {
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "",
+                "from_port": 0,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "-1",
+                "security_groups": [],
+                "self": false,
+                "to_port": 0
+              }
+            ],
+            "id": "sg-03a1cf6e1096f7dd7",
+            "ingress": [
+              {
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "",
+                "from_port": 22,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "tcp",
+                "security_groups": [],
+                "self": false,
+                "to_port": 22
+              },
+              {
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "",
+                "from_port": 8080,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "tcp",
+                "security_groups": [],
+                "self": false,
+                "to_port": 8080
+              },
+              {
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "",
+                "from_port": 80,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "tcp",
+                "security_groups": [],
+                "self": false,
+                "to_port": 80
+              }
+            ],
+            "name": "server_sec_group",
+            "name_prefix": "",
+            "owner_id": "823350166179",
+            "revoke_rules_on_delete": false,
+            "tags": null,
+            "tags_all": {},
+            "timeouts": null,
+            "vpc_id": "vpc-0614afb1668a1e8dd"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6OTAwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "worker_sec_group",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:us-east-1:823350166179:security-group/sg-038ae8bb6bdf77cc4",
+            "description": "Managed by Terraform",
+            "egress": [
+              {
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "",
+                "from_port": 0,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "-1",
+                "security_groups": [],
+                "self": false,
+                "to_port": 0
+              }
+            ],
+            "id": "sg-038ae8bb6bdf77cc4",
+            "ingress": [
+              {
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "",
+                "from_port": 22,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "tcp",
+                "security_groups": [],
+                "self": false,
+                "to_port": 22
+              },
+              {
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "",
+                "from_port": 80,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "tcp",
+                "security_groups": [],
+                "self": false,
+                "to_port": 80
+              }
+            ],
+            "name": "worker_sec_group",
+            "name_prefix": "",
+            "owner_id": "823350166179",
+            "revoke_rules_on_delete": false,
+            "tags": null,
+            "tags_all": {},
+            "timeouts": null,
+            "vpc_id": "vpc-0614afb1668a1e8dd"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6OTAwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "local_file",
+      "name": "tf_ansible_inventory",
+      "provider": "provider[\"registry.terraform.io/hashicorp/local\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "content": "# Ansible vars_file containing variable values from Terraform.\n# Generated by Terraform mgmt configuration.\n\n[webservers]\n18.234.107.70\n\n    \n[webservers:vars]\nansible_ssh_common_args=\"-o StrictHostKeyChecking=no\"\n",
+            "content_base64": null,
+            "directory_permission": "0777",
+            "file_permission": "0777",
+            "filename": "./ansible_provisioning/inventory",
+            "id": "90b6479fde7173a6a81b082fc8d821a9af17e9f3",
+            "sensitive_content": null,
+            "source": null
+          },
+          "sensitive_attributes": [],
+          "dependencies": [
+            "aws_iam_instance_profile.access-s3-profile",
+            "aws_instance.ansible_worker",
+            "aws_security_group.worker_sec_group"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "null_resource",
+      "name": "CopyPubToWorker",
+      "provider": "provider[\"registry.terraform.io/hashicorp/null\"]",
+      "instances": []
+    },
+    {
+      "mode": "managed",
+      "type": "null_resource",
+      "name": "FinalSetup",
+      "provider": "provider[\"registry.terraform.io/hashicorp/null\"]",
+      "instances": []
+    },
+    {
+      "mode": "managed",
+      "type": "null_resource",
+      "name": "InitialSetup",
+      "provider": "provider[\"registry.terraform.io/hashicorp/null\"]",
+      "instances": [
+        {
+          "status": "tainted",
+          "schema_version": 0,
+          "attributes": {
+            "id": "3750062114676807499",
+            "triggers": null
+          },
+          "sensitive_attributes": [],
+          "dependencies": [
+            "aws_iam_instance_profile.access-s3-profile",
+            "aws_instance.ansible_provisioning_server",
+            "aws_instance.ansible_worker",
+            "aws_s3_bucket.b1",
+            "aws_s3_object.upload_ansible",
+            "aws_security_group.server_sec_group",
+            "aws_security_group.worker_sec_group",
+            "data.archive_file.data_backup",
+            "local_file.tf_ansible_inventory"
+          ]
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}
